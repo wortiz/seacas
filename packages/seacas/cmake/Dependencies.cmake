@@ -2,6 +2,7 @@ TRIBITS_PACKAGE_DEFINE_DEPENDENCIES(
   SUBPACKAGES_DIRS_CLASSIFICATIONS_OPTREQS
   Exodus      libraries/exodus        SS  REQUIRED
   Exodus_for  libraries/exodus_for    SS  REQUIRED
+  ExoIIv2for32 libraries/exoIIv2for32 SS  REQUIRED
 )
 
 SET(LIB_OPTIONAL_DEP_TPLS MPI)
