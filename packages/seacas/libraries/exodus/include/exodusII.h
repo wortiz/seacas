@@ -67,8 +67,8 @@
 #endif
 
 /* EXODUS II version number */
-#define EX_API_VERS 6.32f
-#define EX_API_VERS_NODOT 632
+#define EX_API_VERS 6.36f
+#define EX_API_VERS_NODOT 636
 #define EX_VERS EX_API_VERS
 #define NEMESIS_API_VERSION EX_API_VERS
 #define NEMESIS_API_VERSION_NODOT EX_API_VERS_NODOT
@@ -122,8 +122,9 @@ extern "C" {
 */
 #define EX_MAPS_INT64_DB 0x0400 /**< All maps (id, order, ...) store int64_t values */
 #define EX_IDS_INT64_DB 0x0800  /**< All entity ids (sets, blocks, maps) are int64_t values */
-#define EX_BULK_INT64_DB 0x1000 /**< All integer bulk data (local indices, counts, maps); not ids  \
-                                   */
+#define EX_BULK_INT64_DB                                                                           \
+  0x1000 /**< All integer bulk data (local indices, counts, maps); not ids                         \
+            */
 #define EX_ALL_INT64_DB                                                                            \
   (EX_MAPS_INT64_DB | EX_IDS_INT64_DB | EX_BULK_INT64_DB) /**< All of the above... */
 
@@ -627,6 +628,7 @@ EXODUS_EXPORT int ex_large_model(int exoid);
 EXODUS_EXPORT size_t ex_header_size(int exoid);
 
 EXODUS_EXPORT void ex_err(const char *module_name, const char *message, int err_num);
+EXODUS_EXPORT const char *ex_strerror(int err_num);
 EXODUS_EXPORT void ex_get_err(const char **msg, const char **func, int *err_num);
 EXODUS_EXPORT int ex_opts(int options);
 EXODUS_EXPORT int ex_inquire(int exoid, int req_info, void_int * /*ret_int*/, float * /*ret_float*/,
@@ -699,6 +701,10 @@ EXODUS_EXPORT int ex_get_partial_conn(int exoid, ex_entity_type blk_type, ex_ent
                                       int64_t start_num, int64_t num_ent, void_int *nodeconn,
                                       void_int *edgeconn, void_int *faceconn);
 
+EXODUS_EXPORT int ex_put_partial_conn(int exoid, ex_entity_type blk_type, ex_entity_id blk_id,
+                                      int64_t start_num, int64_t num_ent, const void_int *nodeconn,
+                                      const void_int *edgeconn, const void_int *faceconn);
+
 /*  Write Edge Face or Element Block Attributes */
 EXODUS_EXPORT int ex_put_attr(int exoid, ex_entity_type blk_type, ex_entity_id blk_id,
                               const void *attrib);
@@ -752,6 +758,10 @@ EXODUS_EXPORT int ex_get_set_param(int exoid, ex_entity_type set_type, ex_entity
 /*  Write a Node Edge Face or Side Set */
 EXODUS_EXPORT int ex_put_set(int exoid, ex_entity_type set_type, ex_entity_id set_id,
                              const void_int *set_entry_list, const void_int *set_extra_list);
+
+EXODUS_EXPORT int ex_get_partial_set(int exoid, ex_entity_type set_type, ex_entity_id set_id,
+                                     int64_t offset, int64_t num_to_get, void_int *set_entry_list,
+                                     void_int *set_extra_list);
 
 EXODUS_EXPORT int ex_put_partial_set(int exoid, ex_entity_type set_type, ex_entity_id set_id,
                                      int64_t offset, int64_t num_to_put,
