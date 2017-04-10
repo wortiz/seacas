@@ -144,21 +144,17 @@ namespace SEAMS {
   {
     std::string include_path;
     std::string include_file;
-    bool        end_on_exit;
-    bool        warning_msg;
-    bool        info_msg;
-    bool        debugging;
-    bool        interactive;
-    bool        immutable;
-    bool        trace_parsing; // enable debug output in the bison parser
-    bool        one_based_index;
-    bool        keep_history; // Flag to keep a history of Aprepro substitutions
-    aprepro_options()
-        : end_on_exit(false), warning_msg(true), info_msg(false), debugging(false),
-          interactive(false), immutable(false), trace_parsing(false), one_based_index(false),
-          keep_history(false)
-    {
-    }
+    bool        end_on_exit{false};
+    bool        warning_msg{true};
+    bool        info_msg{false};
+    bool        debugging{false};
+    bool        interactive{false};
+    bool        immutable{false};
+    bool        trace_parsing{false}; // enable debug output in the bison parser
+    bool        one_based_index{false};
+    bool        keep_history{false}; // Flag to keep a history of Aprepro substitutions
+    bool        quiet{false};
+    aprepro_options() = default;
   };
 
   /* Structure for holding file names and line counters */
@@ -277,6 +273,7 @@ namespace SEAMS {
     void remove_variable(const std::string &sym_name);
 
     int set_option(const std::string &option, const std::string &optional_value = std::string(""));
+    void parse_options(int argc, char *argv[]);
 
     std::fstream *open_file(const std::string &file, const char *mode);
     std::fstream *check_open_file(const std::string &file, const char *mode);

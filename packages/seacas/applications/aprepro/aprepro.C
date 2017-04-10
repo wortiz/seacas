@@ -41,8 +41,11 @@ int main(int argc, char *argv[])
   SEAMS::Aprepro           aprepro;
   std::vector<std::string> input_files;
 
+  aprepro.parse_options(argc, argv);
+  
   bool quiet = false;
 
+  
   // Parse all options...
   for (int ai = 1; ai < argc; ++ai) {
     std::string arg = argv[ai];

@@ -45,6 +45,7 @@
 #include "apr_util.h"
 #include "aprepro.h"
 #include "aprepro_parser.h"
+#include "cxxopts.hpp"
 
 namespace {
   const unsigned int HASHSIZE       = 5939;
@@ -351,6 +352,111 @@ namespace SEAMS {
     ptr->next          = sym_table[hashval];
     sym_table[hashval] = ptr;
     return ptr;
+  }
+
+  void Aprepro::parse_options(int argc, char *argv[])
+  {
+    cxxopts::Options options(argv[0], "");
+
+    options.add_options()("d,debug", "Dump all variables, debug loops/if/endif")(
+        "v,version", "Print version number to stderr")(
+        "X,immutable", "All variables are immutable--cannot be modified")(
+        "1,one_based_index", "Array indexing is one-based (default = zero-based")(
+        "i,interactive", "Interactive use, no buffering")(
+        "I,include", "Include file or include path, if 'arg' is path, then optionally prepended to "
+                     "all include filenames. If 'arg' is file, then processed before processing "
+                     "input file",
+        cxxopts::value<std::string>())("e,exit_on", "End when 'Exit|EXIT|exit' entered")(
+        "h,help", "Print this list")("M,message", "Print INFO messages")(
+        "W,nowarning", "Do not print WARN messages")(
+        "c,comment", "Change comment character to 'arg'", cxxopts::value<std::string>())(
+        "C,copyright", "Print copyright message")("k,keep_history",
+                                                  "Keep a history of aprepro substitutions")(
+        "q,quiet", "Avoid some extra output during parsing")(
+        "positional", "Positional arguments: these are the arguments that are entered "
+                      "without an option",
+        cxxopts::value<std::vector<std::string>>());
+
+    options.parse_positional(std::string("positional"));
+    options.parse(argc, argv);
+
+    auto &v = options["positional"].as<std::vector<std::string>>();
+    for (const auto &str : v)
+      std::cout << str << std::endl;
+
+    if (options.count("help")) {
+      std::cerr << "\nAprepro version " << version() << "\n"
+                << "\nUsage: aprepro [options] [-I path] [-c char] [var=val] [filein] [fileout]\n"
+                << options.help() << "\n"
+                << "                var=val: Assign value 'val' to variable 'var'    \n"
+                << "                         Use var=\\\"sval\\\" for a string variable\n\n"
+                << "\tUnits Systems: si, cgs, cgs-ev, shock, swap, ft-lbf-s, ft-lbm-s, in-lbf-s\n"
+                << "\tEnter {DUMP()} for list of user-defined variables\n"
+                << "\tEnter {DUMP_FUNC()} for list of functions recognized by aprepro\n"
+                << "\tEnter {DUMP_PREVAR()} for list of predefined variables in aprepro\n\n"
+                << "\t->->-> Send email to gdsjaar@sandia.gov for aprepro support.\n\n";
+      exit(EXIT_SUCCESS);
+    }
+    if (options.count("debug")) {
+      std::cerr << "saw option d\n";
+      ap_options.debugging = true;
+    }
+    if (options.count("version")) {
+      std::cerr << "Algebraic Preprocessor (Aprepro) version " << version() << "\n";
+      exit(EXIT_SUCCESS);
+    }
+    if (options.count("nowarning")) {
+      ap_options.warning_msg = false;
+    }
+    if (options.count("copyright")) {
+      output_copyright();
+      exit(EXIT_SUCCESS);
+    }
+    if (options.count("message")) {
+      ap_options.info_msg = true;
+    }
+    if (options.count("immutable")) {
+      ap_options.immutable = true;
+      stateImmutable       = true;
+    }
+    if (options.count("trace")) {
+      ap_options.trace_parsing = true;
+    }
+    if (options.count("interactive")) {
+      ap_options.interactive = true;
+    }
+    if (options.count("one_based_index")) {
+      ap_options.one_based_index = true;
+    }
+    if (options.count("exit_on")) {
+      ap_options.end_on_exit = true;
+    }
+    if (options.count("include")) {
+      std::string value = options["include"].as<std::string>();
+
+      if (is_directory(value)) {
+        ap_options.include_path = value;
+      }
+      else {
+        ap_options.include_file = value;
+      }
+    }
+
+    if (options.count("keep_history")) {
+      ap_options.keep_history = true;
+    }
+
+    if (options.count("comment")) {
+      std::string comment = options["comment"].as<std::string>();
+      ;
+      std::cerr << "saw option c " << comment << "\n";
+      symrec *ptr = getsym("_C_");
+      if (ptr != nullptr) {
+        char *tmp = nullptr;
+        new_string(comment.c_str(), &tmp);
+        ptr->value.svar = tmp;
+      }
+    }
   }
 
   int Aprepro::set_option(const std::string &option, const std::string &optional_value)
