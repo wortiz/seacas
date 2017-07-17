@@ -195,13 +195,15 @@ FUNCTION(TRIBITS_WRITE_FLEXIBLE_PACKAGE_CLIENT_EXPORT_FILES)
   # A) Process the command-line arguments
   #
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
      #prefix
      PARSE
-     #lists
-     "PACKAGE_NAME;WRITE_CMAKE_CONFIG_FILE;WRITE_EXPORT_MAKEFILE;EXPORT_FILE_VAR_PREFIX"
      #options
      "WRITE_INSTALL_CMAKE_CONFIG_FILE;WRITE_INSTALL_EXPORT_MAKEFILE"
+     #one_value_keywords
+     ""
+     #multi_value_keywords
+     "PACKAGE_NAME;WRITE_CMAKE_CONFIG_FILE;WRITE_EXPORT_MAKEFILE;EXPORT_FILE_VAR_PREFIX"
      ${ARGN}
      )
 
@@ -658,6 +660,9 @@ ENDFUNCTION()
 #
 # Write the outer TriBITS project configure and/or export makefiles
 #
+# If ${PROJECT_NAME}_VERSION is not set or is '' on input, then it will be set
+# to 0.0.0 in order to create the ${PROJECT_NAME}ConfigVersion.cmake file.
+#
 # ToDo: Finish documentation!
 #
 
@@ -691,8 +696,10 @@ FUNCTION(TRIBITS_WRITE_PROJECT_CLIENT_EXPORT_FILES)
 
   # Reversing the tpl list so that the list of tpls will be produced in
   # order of most dependent to least dependent.
-  SET(TPL_LIST ${${PROJECT_NAME}_TPLS})
-  LIST(REVERSE TPL_LIST)
+  IF (${PROJECT_NAME}_TPLS)
+    SET(TPL_LIST ${${PROJECT_NAME}_TPLS})
+    LIST(REVERSE TPL_LIST)
+  ENDIF()
 
   # Loop over all TPLs to determine which were enabled. Then build a list
   # of all their libraries/includes in the proper order for linking
@@ -908,6 +915,9 @@ include(\"\${CMAKE_CURRENT_LIST_DIR}/../${TRIBITS_PACKAGE}/${TRIBITS_PACKAGE}Con
   # Configure the version file for ${PROJECT_NAME}
   #
   INCLUDE(CMakePackageConfigHelpers)
+  IF ("${${PROJECT_NAME}_VERSION}"  STREQUAL  "")
+    SET(${PROJECT_NAME}_VERSION  0.0.0)
+  ENDIF()
   WRITE_BASIC_PACKAGE_VERSION_FILE(
     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
     VERSION ${${PROJECT_NAME}_VERSION}

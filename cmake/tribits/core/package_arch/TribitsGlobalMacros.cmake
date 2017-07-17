@@ -115,6 +115,7 @@ MACRO(TRIBITS_ASSERT_AND_SETUP_PROJECT_AND_STATIC_SYSTEM_VARS)
   #
 
   PRINT_VAR(CMAKE_VERSION)
+  PRINT_VAR(CMAKE_GENERATOR)
 
 ENDMACRO()
 
@@ -143,7 +144,7 @@ ENDMACRO()
 
 
 #
-# Define and option to include a file that reads in a bunch of options
+# Define an option to include a file that reads in a bunch of options
 #
 #
 
@@ -235,13 +236,7 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
     "Enable the C++11 compiler options and related code (see ${PROJECT_NAME}_CXX11_FLAGS)"
     ${${PROJECT_NAME}_ENABLE_CXX11_DEFAULT} )
 
-  IF(WIN32 AND NOT CYGWIN)
-    IF ("${${PROJECT_NAME}_ENABLE_Fortran}" STREQUAL "")
-      MESSAGE(STATUS "Warning: Setting ${PROJECT_NAME}_ENABLE_Fortran=OFF by default"
-        " because this is Windows (not cygwin) and we assume to not have Fortran!")
-    ENDIF()
-    SET(${PROJECT_NAME}_ENABLE_Fortran_DEFAULT OFF)
-  ELSE()
+  IF ("${${PROJECT_NAME}_ENABLE_Fortran_DEFAULT}" STREQUAL "")
     SET(${PROJECT_NAME}_ENABLE_Fortran_DEFAULT ON)
   ENDIF()
 
@@ -252,6 +247,28 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
   ADVANCED_OPTION(${PROJECT_NAME}_SKIP_FORTRANCINTERFACE_VERIFY_TEST
     "Skip the Fortran/C++ compatibility test"
     OFF )
+
+  IF ("${${PROJECT_NAME}_SET_INSTALL_RPATH_DEFAULT}" STREQUAL "")
+    SET(${PROJECT_NAME}_SET_INSTALL_RPATH_DEFAULT TRUE)
+  ELSE()
+    SET(${PROJECT_NAME}_SET_INSTALL_RPATH_DEFAULT FALSE)
+  ENDIF()
+  ADVANCED_SET(
+    ${PROJECT_NAME}_SET_INSTALL_RPATH ${${PROJECT_NAME}_SET_INSTALL_RPATH_DEFAULT}
+    CACHE BOOL
+    "If TRUE, then set RPATH on installed binaries will set to ${PROJECT_NAME}_INSTALL_LIB_DIR automatically"
+    )
+
+  IF ("${CMAKE_INSTALL_RPATH_USE_LINK_PATH_DEFAULT}" STREQUAL "")
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH_DEFAULT TRUE)
+  ELSE()
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH_DEFAULT FALSE)
+  ENDIF()
+  ADVANCED_SET(
+    CMAKE_INSTALL_RPATH_USE_LINK_PATH ${CMAKE_INSTALL_RPATH_USE_LINK_PATH_DEFAULT}
+    CACHE BOOL
+    "If set to TRUE, then the RPATH for external shared libs will be embedded in installed libs and execs."
+    )
 
   ADVANCED_SET(${PROJECT_NAME}_EXTRA_LINK_FLAGS ""
     CACHE STRING
@@ -264,6 +281,23 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
   OPTION(${PROJECT_NAME}_ENABLE_OpenMP
     "Build with OpenMP support." OFF)
 
+  IF (NOT CMAKE_VERSION VERSION_LESS "3.7.0")
+    IF (
+      CMAKE_GENERATOR STREQUAL "Ninja"
+      AND
+      "${${PROJECT_NAME}_WRITE_NINJA_MAKEFILES_DEFAULT}" STREQUAL ""
+      )
+      SET(${PROJECT_NAME}_WRITE_NINJA_MAKEFILES_DEFAULT ON)
+    ELSE()
+      SET(${PROJECT_NAME}_WRITE_NINJA_MAKEFILES_DEFAULT OFF)
+    ENDIF()
+    SET(${PROJECT_NAME}_WRITE_NINJA_MAKEFILES
+      ${${PROJECT_NAME}_WRITE_NINJA_MAKEFILES_DEFAULT} CACHE BOOL
+      "Generate dummy makefiles to call ninja in every bulid subdirectory (requires CMake 3.7.0 or newer)." )
+  ELSE()
+    SET(${PROJECT_NAME}_WRITE_NINJA_MAKEFILES OFF)
+  ENDIF()
+  
   IF (CMAKE_BUILD_TYPE STREQUAL "DEBUG")
     SET(${PROJECT_NAME}_ENABLE_DEBUG_DEFAULT ON)
   ELSE()
@@ -346,15 +380,24 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
     "If set TRUE, then 'SYSTEM' will be passed into INCLUDE_DIRECTORIES() for TPL includes.")
 
   ADVANCED_SET(TPL_FIND_SHARED_LIBS ON CACHE BOOL
-    "If ON, then the TPL system will find shared libs if the exist, otherwise will only find static libs." )
+    "If ON, then the TPL system will find shared libs if they exist, otherwise will only find static libs." )
 
   ADVANCED_SET(${PROJECT_NAME}_LINK_SEARCH_START_STATIC OFF CACHE BOOL
-    "If on, then the property LINK_SEARCH_START_STATIC will be added to all executables." )
+    "If ON, then the property LINK_SEARCH_START_STATIC will be added to all executables." )
 
   ADVANCED_SET(${PROJECT_NAME}_LIBRARY_NAME_PREFIX ""
     CACHE STRING
     "Prefix for all ${PROJECT_NAME} library names. If set to, for example, 'prefix_',
     libraries will be named and installed as 'prefix_<libname>.*'.  Default is '' (no prefix)."
+    )
+
+  IF ("${${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS_DEFAULT}" STREQUAL "")
+    SET(${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS_DEFAULT FALSE)
+  ENDIF()
+  ADVANCED_SET( ${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS
+    ${${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS_DEFAULT}
+    CACHE BOOL
+    "If set to TRUE, then all of the TPL libs must be found for every enabled TPL."
     )
 
   IF ("${${PROJECT_NAME}_USE_GNUINSTALLDIRS_DEFAULT}" STREQUAL "")
@@ -388,7 +431,7 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
   ADVANCED_SET(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES
     ${${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES_DEFAULT}
     CACHE BOOL
-    "Determines if export makefiles will be create and installed."
+    "Determines if export makefiles will be created and installed."
     )
 
   # Creating <Package>Config.cmake files is currently *very* expensive for large
@@ -466,6 +509,18 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
 
   ADVANCED_SET(${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE OFF CACHE BOOL
     "Generate a <ProjectName>RepoVersion.txt file.")
+
+  IF ("${DART_TESTING_TIMEOUT_DEFAULT}"  STREQUAL "")
+    SET(DART_TESTING_TIMEOUT_DEFAULT  1500)
+  ENDIF()
+  ADVANCED_SET(
+    DART_TESTING_TIMEOUT ${DART_TESTING_TIMEOUT_DEFAULT}
+    CACHE STRING
+    "Raw CMake/CTest global default test timeout (default 1500).  (NOTE: Does not impact timeouts of tests that have the TIMEOUT property set on a test-by-test basis.)"
+    )
+  # NOTE: 1500 is the CMake default set in Modules/CTest.cmake.  We need to
+  # set the default here because we need to be able to scale it correctly in
+  # case the user does not explicilty set this var in the cache.
 
   ADVANCED_SET(${PROJECT_NAME}_SCALE_TEST_TIMEOUT 1.0 CACHE STRING
     "Scale factor for global DART_TESTING_TIMEOUT and individual test TIMEOUT (default 1.0)."
@@ -730,26 +785,57 @@ MACRO(TRIBITS_SETUP_INSTALLATION_PATHS)
   ADVANCED_SET( ${PROJECT_NAME}_INSTALL_INCLUDE_DIR
     ${${PROJECT_NAME}_INSTALL_INCLUDE_DIR_DEFAULT}
     CACHE PATH
-    "Location where the headers will be installed.  If given as a relative path, it will be relative to ${CMAKE_INSTALL_PREFIX}.  If given as an absolute path, it will used as such.  Default is 'include'"
+    "Location where the headers will be installed.  If given as a STRING type and relative path, it will be relative to ${CMAKE_INSTALL_PREFIX}.  If given as an absolute path, it will used as such.  Default is 'include'"
     )
 
   ADVANCED_SET( ${PROJECT_NAME}_INSTALL_LIB_DIR
     ${${PROJECT_NAME}_INSTALL_LIB_DIR_DEFAULT}
     CACHE PATH
-    "Location where the libraries will be installed.  If given as a relative path, it will be relative to ${CMAKE_INSTALL_PREFIX}.  If given as an absolute path, it will used as such.  Default is 'lib'"
+    "Location where the libraries will be installed.  If given as a STRING type relative path, it will be relative to ${CMAKE_INSTALL_PREFIX}.  If given as an absolute path, it will used as such.  Default is 'lib'"
     )
 
   ADVANCED_SET( ${PROJECT_NAME}_INSTALL_RUNTIME_DIR
     ${${PROJECT_NAME}_INSTALL_RUNTIME_DIR_DEFAULT}
     CACHE PATH
-    "Location where the runtime DLLs and designated programs will be installed.  If given as a relative path, it will be relative to ${CMAKE_INSTALL_PREFIX}.  If given as an absolute path, it will used as such.  Default is 'bin'"
+    "Location where the runtime DLLs and designated programs will be installed.  If given as a STRING type relative path, it will be relative to ${CMAKE_INSTALL_PREFIX}.  If given as an absolute path, it will used as such.  Default is 'bin'"
     )
 
   ADVANCED_SET(${PROJECT_NAME}_INSTALL_EXAMPLE_DIR
     ${${PROJECT_NAME}_INSTALL_EXAMPLE_DIR_DEFAULT}
     CACHE PATH
-    "Location where assorted examples will be installed.  If given as a relative path, it will be relative to ${CMAKE_INSTALL_PREFIX}.  If given as an absolute path, it will used as such.  Default is 'example'"
+    "Location where assorted examples will be installed.  If given as a STRING type relative path, it will be relative to ${CMAKE_INSTALL_PREFIX}.  If given as an absolute path, it will used as such.  Default is 'example'"
     )
+
+  #
+  # D) Setup RPATH handling
+  #
+
+  PRINT_VAR(${PROJECT_NAME}_SET_INSTALL_RPATH)
+  PRINT_VAR(CMAKE_INSTALL_RPATH_USE_LINK_PATH)
+
+  IF (${PROJECT_NAME}_SET_INSTALL_RPATH)
+    IF ("${CMAKE_INSTALL_RPATH}" STREQUAL "")
+      MESSAGE("-- " "Setting default for CMAKE_INSTALL_RPATH pointing to ${PROJECT_NAME}_INSTALL_LIB_DIR")
+      ASSERT_DEFINED(CMAKE_INSTALL_PREFIX)
+      ASSERT_DEFINED(${PROJECT_NAME}_INSTALL_LIB_DIR)
+      IF (IS_ABSOLUTE ${${PROJECT_NAME}_INSTALL_LIB_DIR})
+        SET(CMAKE_INSTALL_RPATH
+          "${PROJECT_NAME}_INSTALL_LIB_DIR}" )
+      ELSE()
+        SET(CMAKE_INSTALL_RPATH
+          "${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR}" )
+      ENDIF()
+    ENDIF()
+    IF (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+      IF ("${CMAKE_MACOSX_RPATH}" STREQUAL "")
+        MESSAGE("-- " "Setting default CMAKE_MACOSX_RPATH=TRUE")
+        SET(CMAKE_MACOSX_RPATH TRUE)
+      ENDIF()
+      PRINT_VAR(CMAKE_MACOSX_RPATH)
+    ENDIF()
+  ENDIF()
+  STRING(REPLACE ":" ";" CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}")
+  PRINT_VAR(CMAKE_INSTALL_RPATH)
 
 ENDMACRO()
 
@@ -1604,6 +1690,9 @@ MACRO(TRIBITS_SETUP_ENV)
     # var getting set there.
   ENDIF()
 
+  # BUILD_SHARED_LIBS
+  PRINT_VAR(BUILD_SHARED_LIBS)
+
   # Set to release build by default
 
   IF ("${CMAKE_BUILD_TYPE}" STREQUAL "")
@@ -1619,8 +1708,6 @@ MACRO(TRIBITS_SETUP_ENV)
     ENDIF()
   ENDIF()
   PRINT_VAR(CMAKE_BUILD_TYPE)
-
-  PRINT_VAR(BUILD_SHARED_LIBS)
 
   # Override the silly CMAKE_CONFIGURATION_TYPES variable.  This is needed for
   # MSVS!  Later, we Override CMAKE_CONFIGURATION_TYPES to just one
@@ -1678,6 +1765,12 @@ MACRO(TRIBITS_SETUP_ENV)
 
   INCLUDE(TribitsSetupBasicCompileLinkFlags)
   TRIBITS_SETUP_BASIC_COMPILE_LINK_FLAGS()
+
+  #
+  # The compilers are set, the environment is known to CMake.  Now set the
+  # installation paths and options.
+  #
+  TRIBITS_SETUP_INSTALLATION_PATHS()
 
   # Set up Windows interface stuff
 
@@ -1801,8 +1894,12 @@ MACRO(TRIBITS_SETUP_ENV)
     IF(OPENMP_FOUND)
       SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-      # FindOpenMP.cmake doesn't find Fortran flags.  Mike H said this is safe.
-      SET(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_C_FLAGS}")
+      IF(OpenMP_Fortran_FLAGS)
+        SET(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_Fortran_FLAGS}")
+      ELSE()
+      # Older versions of FindOpenMP.cmake don't find Fortran flags.  Mike H said this is safe.
+        SET(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ${OpenMP_C_FLAGS}")
+      ENDIF()
     ELSE()
       MESSAGE(FATAL_ERROR "Could not find OpenMP, try setting OpenMP_C_FLAGS and OpenMP_CXX_FLAGS directly")
     ENDIF(OPENMP_FOUND)
@@ -1862,18 +1959,45 @@ ENDMACRO()
 #
 
 MACRO(TRIBITS_INCLUDE_CTEST_SUPPORT)
-  IF (DART_TESTING_TIMEOUT)
-    SET(DART_TESTING_TIMEOUT_IN ${DART_TESTING_TIMEOUT})
+
+  SET(DART_TESTING_TIMEOUT_IN ${DART_TESTING_TIMEOUT})
+
+  IF (DART_TESTING_TIMEOUT_IN)
     TRIBITS_SCALE_TIMEOUT(${DART_TESTING_TIMEOUT} DART_TESTING_TIMEOUT)
     IF (NOT DART_TESTING_TIMEOUT STREQUAL DART_TESTING_TIMEOUT_IN)
      MESSAGE("-- DART_TESTING_TIMEOUT=${DART_TESTING_TIMEOUT_IN} being scaled by ${PROJECT_NAME}_SCALE_TEST_TIMEOUT=${${PROJECT_NAME}_SCALE_TEST_TIMEOUT} to ${DART_TESTING_TIMEOUT}")
     ENDIF()
+    # Have to set DART_TESTING_TIMEOUT in cache or CMake will not put in right
+    # 'TimeOut' in DartConfiguration.tcl file!
+    SET(DART_TESTING_TIMEOUT ${DART_TESTING_TIMEOUT} CACHE STRING "" FORCE)
   ENDIF()
-  INCLUDE(CTest)
+
+  INCLUDE(CTest)  # Generates file DartConfiguration.tcl with 'TimeOut' set!
+
+  IF (DART_TESTING_TIMEOUT_IN)
+    # Put DART_TESTING_TIMEOUT back to user input value to avoid scaling this
+    # up and up on recofigures!
+    SET(DART_TESTING_TIMEOUT ${DART_TESTING_TIMEOUT_IN} CACHE STRING
+      "Original value set by user reset by TriBITS after scaling" FORCE)
+  ENDIF()
+
   TRIBITS_CONFIGURE_CTEST_CUSTOM(${${PROJECT_NAME}_SOURCE_DIR}
     ${${PROJECT_NAME}_BINARY_DIR})
-ENDMACRO()
 
+ENDMACRO()
+# NOTE: The above logic with DART_TESTING_TIMEOUT is a huge hack.  For some
+# reason, on the first configure CMake will not put the local value of the
+# scaled DART_TESTING_TIMEOUT variable into the DartConfiguration.tcl.
+# Instead, it uses the value of DART_TESTING_TIMEOUT that is in the cache.
+# But on reconfigures, CMake uses the value of the local variable
+# DART_TESTING_TIMEOUT and ignores the value in the cache (very irritating).
+# Therefore, to get CMake to put in the right value for 'TimeOut', you have to
+# force-set DART_TESTING_TIMEOUT in the cache on the first configure.  But to
+# avoid rescaling DART_TESTING_TIMEOUT up and up on reconfigures, you have to
+# force-set DART_TESTING_TIMEOUT back to the user's input value.  The only
+# disadvantage of this approach (other than it is a hack to get around a CMake
+# bug) is that you loose the user's documentation string, in case they set
+# that with a SET( ... CACHE ...) statement in an input *.cmake file.
 
 
 #
