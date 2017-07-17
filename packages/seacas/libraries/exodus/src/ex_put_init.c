@@ -33,9 +33,9 @@
  *
  */
 
-#include "exodusII.h"  // for ex_init_params, etc
-#include <string.h>    // for strncpy
-#include <sys/types.h> // for int64_t
+#include "exodusII.h" // for ex_init_params, etc
+#include <stdint.h>   // for int64_t
+#include <string.h>   // for strncpy
 
 /*!
 
@@ -52,7 +52,7 @@ include:
 
 \param exoid         exodus file ID returned from a previous call to ex_create()
 or ex_open().
-\param title         Database title. Maximum length is \c MAX_LINE_LENGTH.
+\param title         Database title. Maximum length is MAX_LINE_LENGTH.
 \param num_dim       The dimensionality of the database. This is the number of
 coordinates per node.
 \param num_nodes     The number of nodal points.
@@ -64,7 +64,7 @@ coordinates per node.
 The following code segment will initialize an open exodus file with
 the specified parameters:
 
-\code
+~~~{.c}
 int num_dim, num_nods, num_el, num_el_blk, num_ns, num_ss, error, exoid;
 
 \comment{initialize file with parameters}
@@ -73,7 +73,7 @@ num_ns = 2; num_ss = 5;
 
 error = ex_put_init (exoid, "This is the title", num_dim,
                      num_nods, num_el,num_el_blk, num_ns, num_ss);
-\endcode
+~~~
 
 */
 

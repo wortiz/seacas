@@ -39,218 +39,6 @@
 #include "exodusII.h"
 #include "exodusII_int.h"
 
-/*!
-\fn{int ex_inquire (int exoid, int req_info, void_int *ret_int, float
-*ret_float, char *ret_char)}
-
-The function ex_inquire() is used to inquire values of certain
-data entities in an exodus file. Memory must be allocated for the
-returned values before this function is invoked.query database. \sa
-ex_inquire_int().
-
-\return In case of an error, ex_inquire() returns a negative
-        number; a warning will return a positive number.
-        Possible causes of errors include:
-  -  data file not properly opened with call to ex_create() or ex_open().
-  -  requested information not stored in the file.
-  -  invalid request flag.
-
-\param[in] exoid     exodus file ID returned from a previous call to ex_create()
-or ex_open().
-\param[in] req_info  A flag which designates what information is requested. It
-must be one
-                     of the following constants in the table below.
-
-\param[out]  ret_int   Returned integer, if an integer value is requested
-(according
-                       to \c req_info); otherwise, supply a dummy argument.
-
-\param[out]  ret_float Returned float, if a float value is requested
-                       (according to \c req_info); otherwise, supply a dummy
-                       argument. This argument is always a float even if the
-database IO
-                       and/or CPU word size is a double.
-
-\param[out]  ret_char  Returned character string, if a character value is
-requested (according
-                       to \c req_info); otherwise, supply a dummy argument.
-
-<table>
-<tr><td>\c EX_INQ_API_VERS</td><td> The exodus API version number is returned
- in \c ret_float and an undotted version number is returned in
- \c ret_int. The API version number reflects the release of the
- function library (i.e., function names, argument list, etc.). The API
- and LIB version numbers are synchronized and will always
- match. Initially, it was thought that maintaining the two versions
- separately would be a benefit, but that was more confusing than
- helpful, so the numbers were made the same.</td></tr>
-
- <tr><td> \c EX_INQ_DB_VERS </td><td> The exodus database version number is
- returned in \c ret_float and an ``undotted'' version number is
- returned in \c ret_int. The database version number reflects the
- version of the library that was used to \e write the file pointed to by
- \c exoid. </td></tr>
-
- <tr><td> \c EX_INQ_LIB_VERS  </td><td>The exodus library version number is
- returned in \c ret_float and an undotted version number is
- returned in \c ret_int. The API library version number reflects
- the version number of the exodus library linked with this
- application. </td></tr>
-
- <tr><td> \c EX_INQ_TITLE  </td><td>The title stored in the database is returned
-in \c ret_char. </td></tr>
-
- <tr><td> \c EX_INQ_DIM  </td><td>The dimensionality, or number of coordinates
- per node (1, 2 or 3), of the database is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_NODES  </td><td>The number of nodes is returned in \c
-ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ELEM  </td><td>The number of elements is returned in \c
-ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ELEM_BLK  </td><td>The number of element blocks is returned
-in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_NODE_SETS  </td><td>The number of node sets is returned in
-\c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_NS_NODE_LEN  </td><td>The length of the concatenated node
- sets node list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_NS_DF_LEN  </td><td>The length of the concatenated node
- sets distribution list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_SIDE_SETS  </td><td>The number of side sets is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_SS_ELEM_LEN  </td><td>The length of the concatenated side
- sets element list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_SS_DF_LEN  </td><td>The length of the concatenated side
- sets distribution factor list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_SS_NODE_LEN  </td><td>The aggregate length of all of the
- side sets node lists is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_EB_PROP  </td><td>The number of integer properties stored
- for each element block is returned in \c ret_int; this number
- includes the property named \c ID. </td></tr>
-
- <tr><td> \c EX_INQ_NS_PROP  </td><td>The number of integer properties stored
- for each node set is returned in \c ret_int; this number includes
- the property named \c ID. </td></tr>
-
- <tr><td> \c EX_INQ_SS_PROP  </td><td>The number of integer properties stored
- for each side set is returned in \c ret_int; this number includes
- the property named \c ID. </td></tr>
-
- <tr><td> \c EX_INQ_QA  </td><td>The number of QA records is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_INFO  </td><td>The number of information records is returned
- in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_TIME  </td><td>The number of time steps stored in the
- database is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_EDGE_BLK   </td><td>The number of edge blocks is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_EDGE_MAP   </td><td>The number of edge maps is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_EDGE_PROP   </td><td>The number of properties stored per
- edge blockis returned in \c ret_int.  </td></tr>
-
- <tr><td> \c EX_INQ_EDGE_SETS   </td><td>The number of edge sets is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_EDGE   </td><td>The number of edges is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_FACE   </td><td>The number of faces is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_EB_PROP   </td><td>The number of element block properties is
- returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ELEM_MAP   </td><td>The number of element maps is returned
- in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ELEM_SETS   </td><td>The number of element sets is returned
- in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ELS_DF_LEN   </td><td>The length of the concatenated
- element set distribution factor list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ELS_LEN   </td><td>The length of the concatenated element
- set element list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ELS_PROP   </td><td>The number of properties stored per elem
- set is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_EM_PROP   </td><td>The number of element map properties is
- returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ES_DF_LEN   </td><td>The length of the concatenated edge
- set distribution factor list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ES_LEN   </td><td>The length of the concatenated edge set
- edge list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_ES_PROP   </td><td>The number of properties stored per edge
- set is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_FACE_BLK   </td><td>The number of face blocks is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_FACE_MAP   </td><td>The number of face maps is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_FACE_PROP   </td><td>The number of properties stored per
- face block is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_FACE_SETS   </td><td>The number of face sets is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_FS_DF_LEN   </td><td>The length of the concatenated face
- set distribution factor list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_FS_LEN   </td><td>The length of the concatenated face set
- face list is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_FS_PROP   </td><td>The number of properties stored per face
- set is returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_NM_PROP   </td><td>The number of node map properties is
- returned in \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_NODE_MAP   </td><td>The number of node maps is returned in
- \c ret_int. </td></tr>
-
- <tr><td> \c EX_INQ_COORD_FRAMES </td><td>The number of coordinate frames is
-returned in \c ret_int. </td></tr>
-</table>
-
-As an example, the following will return the number of element
-block properties stored in the exodus file :
-
-\code
-#include "exodusII.h"
-int error, exoid, num_props;
-float fdum;
-char *cdum;
-
-\comment{determine the number of element block properties}
-error = ex_inquire (exoid, EX_INQ_EB_PROP, &num_props,
-                    &fdum, cdum);
-...Another way to get the same information
-num_props = ex_inquire_int(exoid, EX_INQ_EB_PROP);
-\endcode
-
-*/
-
 /*! \cond INTERNAL */
 static int ex_get_dimension_value(int exoid, int64_t *var, int default_value,
                                   const char *dimension_name, int missing_ok)
@@ -265,19 +53,17 @@ static int ex_get_dimension_value(int exoid, int64_t *var, int default_value,
     if (missing_ok) {
       return (EX_NOERR);
     }
-    exerrval = status;
     snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to retrieve dimension %s for file id %d",
              dimension_name, exoid);
-    ex_err("ex_inquire", errmsg, exerrval);
+    ex_err("ex_inquire", errmsg, status);
     return (EX_FATAL);
   }
   if ((status = nc_inq_dimlen(exoid, dimid, &idum)) != NC_NOERR) {
-    *var     = default_value;
-    exerrval = status;
+    *var = default_value;
     snprintf(errmsg, MAX_ERR_LENGTH,
              "ERROR: failed to retrieve value for dimension %s for file id %d", dimension_name,
              exoid);
-    ex_err("ex_inquire", errmsg, exerrval);
+    ex_err("ex_inquire", errmsg, status);
     return (EX_FATAL);
   }
   *var = idum;
@@ -301,20 +87,18 @@ static int ex_get_concat_set_len(int exoid, int64_t *set_length, const char *set
 
   if ((status = nc_inq_dimid(exoid, set_num_dim, &dimid)) == NC_NOERR) {
     if ((status = nc_inq_dimlen(exoid, dimid, &num_sets)) != NC_NOERR) {
-      exerrval = status;
       snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get number of %s sets in file id %d",
                set_name, exoid);
-      ex_err("ex_inquire", errmsg, exerrval);
+      ex_err("ex_inquire", errmsg, status);
       return (EX_FATAL);
     }
 
     /* Allocate space for stat array */
     if (!(stat_vals = malloc((int)num_sets * sizeof(int)))) {
-      exerrval = EX_MEMFAIL;
       snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to allocate memory for %s set status "
                                        "array for file id %d",
                set_name, exoid);
-      ex_err("ex_inquire", errmsg, exerrval);
+      ex_err("ex_inquire", errmsg, EX_MEMFAIL);
       return (EX_FATAL);
     }
 
@@ -323,11 +107,10 @@ static int ex_get_concat_set_len(int exoid, int64_t *set_length, const char *set
       /* if status array exists, use it, otherwise assume, object exists
          to be backward compatible */
       if ((status = nc_get_var_int(exoid, varid, stat_vals)) != NC_NOERR) {
-        exerrval = status;
         free(stat_vals);
         snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get %s set status array from file id %d",
                  set_name, exoid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, status);
         return (EX_FATAL);
       }
     }
@@ -384,15 +167,14 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
   int       status;
   char      tmp_title[2048];
 
-  exerrval = 0; /* clear error code */
+  ex_check_valid_file_id(exoid);
 
   if (ret_char) {
-    *ret_char = '\0'; /* Only needs to be non-null for TITLE */
+    *ret_char = '\0'; /* Only needs to be non-null for TITLE and some GROUP NAME inquiries */
   }
   if (!ret_int) {
-    exerrval = EX_BADPARAM;
     snprintf(errmsg, MAX_ERR_LENGTH, "Warning: integer argument is NULL which is not allowed.");
-    ex_err("ex_inquire", errmsg, exerrval);
+    ex_err("ex_inquire", errmsg, EX_BADPARAM);
     return (EX_FATAL);
   }
 
@@ -402,19 +184,17 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
   case EX_INQ_FILE_TYPE:
 
     /* obsolete call */
-    /*returns "r" for regular EXODUS II file or "h" for history EXODUS file*/
-    exerrval = EX_BADPARAM;
+    /*returns "r" for regular EXODUS file or "h" for history EXODUS file*/
     snprintf(errmsg, MAX_ERR_LENGTH, "Warning: file type inquire is obsolete");
-    ex_err("ex_inquire", errmsg, exerrval);
+    ex_err("ex_inquire", errmsg, EX_BADPARAM);
     return (EX_WARN);
 
   case EX_INQ_API_VERS:
-    /* returns the EXODUS II API version number */
+    /* returns the EXODUS API version number */
     if (!ret_float) {
-      exerrval = EX_BADPARAM;
       snprintf(errmsg, MAX_ERR_LENGTH, "Warning: float argument is NULL for EX_INQ_API_VERS "
                                        "which is not allowed.");
-      ex_err("ex_inquire", errmsg, exerrval);
+      ex_err("ex_inquire", errmsg, EX_BADPARAM);
       return (EX_FATAL);
     }
 
@@ -422,10 +202,9 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
         NC_NOERR) { /* try old (prior to db version 2.02) attribute name */
       if ((status = nc_get_att_float(rootid, NC_GLOBAL, ATT_API_VERSION_BLANK, ret_float)) !=
           NC_NOERR) {
-        exerrval = status;
         snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get EXODUS API version for file id %d",
                  rootid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, status);
         return (EX_FATAL);
       }
     }
@@ -433,26 +212,24 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
     break;
 
   case EX_INQ_DB_VERS:
-    /* returns the EXODUS II database version number */
+    /* returns the EXODUS database version number */
     if (!ret_float) {
-      exerrval = EX_BADPARAM;
       snprintf(errmsg, MAX_ERR_LENGTH, "Warning: float argument is NULL for EX_INQ_DB_VERS "
                                        "which is not allowed.");
-      ex_err("ex_inquire", errmsg, exerrval);
+      ex_err("ex_inquire", errmsg, EX_BADPARAM);
       return (EX_FATAL);
     }
 
     if ((status = nc_get_att_float(rootid, NC_GLOBAL, ATT_VERSION, ret_float)) != NC_NOERR) {
-      exerrval = status;
       snprintf(errmsg, MAX_ERR_LENGTH,
                "ERROR: failed to get EXODUS database version for file id %d", rootid);
-      ex_err("ex_inquire", errmsg, exerrval);
+      ex_err("ex_inquire", errmsg, status);
       return (EX_FATAL);
     }
     break;
 
   case EX_INQ_LIB_VERS:
-    /* returns the EXODUS II Library version number */
+    /* returns the EXODUS Library version number */
     if (ret_float) {
       flt_cvt(ret_float, EX_API_VERS);
     }
@@ -473,10 +250,9 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
       /* Get the name string length */
       size_t name_length = 0;
       if ((status = nc_inq_dimlen(rootid, dimid, &name_length)) != NC_NOERR) {
-        exerrval = status;
         snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get name string length in file id %d",
                  exoid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, status);
         return (EX_FATAL);
       }
 
@@ -519,9 +295,8 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
     struct ex_file_item *file = ex_find_file_item(rootid);
 
     if (!file) {
-      exerrval = EX_BADFILEID;
       snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: unknown file id %d for ex_inquire_int().", rootid);
-      ex_err("ex_inquire", errmsg, exerrval);
+      ex_err("ex_inquire", errmsg, EX_BADFILEID);
       *ret_int = 0;
     }
     else {
@@ -534,7 +309,7 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
       snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: Requested title, but character pointer was null "
                                        "for file id %d",
                rootid);
-      ex_err("ex_inquire", errmsg, exerrval);
+      ex_err("ex_inquire", errmsg, EX_BADPARAM);
       return (EX_FATAL);
     }
     else {
@@ -542,10 +317,9 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
       /* Title is stored at root level... */
       if ((status = nc_get_att_text(rootid, NC_GLOBAL, ATT_TITLE, tmp_title)) != NC_NOERR) {
         *ret_char = '\0';
-        exerrval  = status;
         snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get database title for file id %d",
                  exoid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, status);
         return (EX_FATAL);
       }
       strncpy(ret_char, tmp_title, MAX_LINE_LENGTH + 1);
@@ -557,7 +331,7 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
     /* returns the dimensionality (2 or 3, for 2-d or 3-d) of the database */
     if (ex_get_dimension(exoid, DIM_NUM_DIM, "database dimensionality", &ldum, &dimid,
                          "ex_inquire") != NC_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     *ret_int = ldum;
     break;
@@ -626,10 +400,9 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
 
     if (nc_inq_dimid(exoid, DIM_NUM_NS, &dimid) == NC_NOERR) {
       if ((status = nc_inq_dimlen(exoid, dimid, &num_sets)) != NC_NOERR) {
-        exerrval = status;
         snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get number of node sets in file id %d",
                  exoid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, status);
         return (EX_FATAL);
       }
 
@@ -640,32 +413,29 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
           }
           else {
             *ret_int = 0;
-            exerrval = status;
             snprintf(errmsg, MAX_ERR_LENGTH,
                      "ERROR: failed to locate number of dist fact for %" ST_ZU
                      "'th node set in file id %d",
                      i, exoid);
-            ex_err("ex_inquire", errmsg, exerrval);
+            ex_err("ex_inquire", errmsg, status);
             return (EX_FATAL);
           }
         }
         else {
           if ((status = nc_inq_dimid(exoid, DIM_NUM_NOD_NS(i + 1), &dimid)) != NC_NOERR) {
             *ret_int = 0;
-            exerrval = status;
             snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to locate number of nodes in %" ST_ZU
                                              "'th node set in file id %d",
                      i, exoid);
-            ex_err("ex_inquire", errmsg, exerrval);
+            ex_err("ex_inquire", errmsg, status);
             return (EX_FATAL);
           }
           if ((status = nc_inq_dimlen(exoid, dimid, &idum)) != NC_NOERR) {
             *ret_int = 0;
-            exerrval = status;
             snprintf(errmsg, MAX_ERR_LENGTH,
                      "ERROR: failed to get number of nodes in %" ST_ZU "'th node set in file id %d",
                      i, exoid);
-            ex_err("ex_inquire", errmsg, exerrval);
+            ex_err("ex_inquire", errmsg, status);
             return (EX_FATAL);
           }
         }
@@ -693,37 +463,34 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
 
     if (nc_inq_dimid(exoid, DIM_NUM_SS, &dimid) == NC_NOERR) {
       if ((status = nc_inq_dimlen(exoid, dimid, &num_sets)) != NC_NOERR) {
-        exerrval = status;
         snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get number of side sets in file id %d",
                  exoid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, status);
         return (EX_FATAL);
       }
 
       if (!(ids = malloc(num_sets * sizeof(int64_t)))) { /* May be getting 2x what is
                                                             needed, but should be OK */
-        exerrval = EX_MEMFAIL;
         snprintf(errmsg, MAX_ERR_LENGTH,
                  "ERROR: failed to allocate memory for side set ids for file id %d", exoid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, EX_MEMFAIL);
         return (EX_FATAL);
       }
 
-      if (ex_get_side_set_ids(exoid, ids) == EX_FATAL) {
+      if (ex_get_ids(exoid, EX_SIDE_SET, ids) == EX_FATAL) {
         snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get side set ids in file id %d", exoid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, EX_LASTERR);
         free(ids);
         return (EX_FATAL);
       }
 
       /* allocate space for stat array */
       if (!(stat_vals = malloc((int)num_sets * sizeof(int)))) {
-        exerrval = EX_MEMFAIL;
         free(ids);
         snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to allocate memory for side set status "
                                          "array for file id %d",
                  exoid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, EX_MEMFAIL);
         return (EX_FATAL);
       }
       /* get variable id of status array */
@@ -732,12 +499,11 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
            to be backward compatible */
 
         if ((status = nc_get_var_int(exoid, varid, stat_vals)) != NC_NOERR) {
-          exerrval = status;
           free(ids);
           free(stat_vals);
           snprintf(errmsg, MAX_ERR_LENGTH,
                    "ERROR: failed to get element block status array from file id %d", exoid);
-          ex_err("ex_inquire", errmsg, exerrval);
+          ex_err("ex_inquire", errmsg, status);
           return (EX_FATAL);
         }
       }
@@ -774,10 +540,9 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
 
         if (status != NC_NOERR) {
           *ret_int = 0;
-          exerrval = status;
           snprintf(errmsg, MAX_ERR_LENGTH,
                    "ERROR: failed to side set %" PRId64 " node length in file id %d", id, exoid);
-          ex_err("ex_inquire", errmsg, exerrval);
+          ex_err("ex_inquire", errmsg, status);
           free(stat_vals);
           free(ids);
           return (EX_FATAL);
@@ -815,10 +580,9 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
 
     if (nc_inq_dimid(exoid, DIM_NUM_SS, &dimid) == NC_NOERR) {
       if ((status = nc_inq_dimlen(exoid, dimid, &num_sets)) != NC_NOERR) {
-        exerrval = status;
         snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get number of side sets in file id %d",
                  exoid);
-        ex_err("ex_inquire", errmsg, exerrval);
+        ex_err("ex_inquire", errmsg, status);
         return (EX_FATAL);
       }
 
@@ -829,24 +593,22 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
           }
           else {
             *ret_int = 0;
-            exerrval = status;
             snprintf(errmsg, MAX_ERR_LENGTH,
                      "ERROR: failed to locate number of dist fact for %" ST_ZU
                      "'th side set in file id %d",
                      i, exoid);
-            ex_err("ex_inquire", errmsg, exerrval);
+            ex_err("ex_inquire", errmsg, status);
             return (EX_FATAL);
           }
         }
         else {
           if ((status = nc_inq_dimlen(exoid, dimid, &ldum)) != NC_NOERR) {
             *ret_int = 0;
-            exerrval = status;
             snprintf(errmsg, MAX_ERR_LENGTH,
                      "ERROR: failed to get number of dist factors in %" ST_ZU
                      "'th side set in file id %d",
                      i, exoid);
-            ex_err("ex_inquire", errmsg, exerrval);
+            ex_err("ex_inquire", errmsg, status);
             return (EX_FATAL);
           }
         }
@@ -880,7 +642,7 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
     /*     returns the number of time steps stored in the database */
     if (ex_get_dimension(exoid, DIM_TIME, "time dimension", &ldum, &dimid, "ex_inquire") !=
         NC_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     *ret_int = ldum;
     break;
@@ -933,21 +695,21 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
   case EX_INQ_EDGE:
     /* returns the number of edges (defined across all edge blocks). */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_EDGE, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
   case EX_INQ_EDGE_BLK:
     /* returns the number of edge blocks. */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_ED_BLK, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
   case EX_INQ_EDGE_SETS:
     /* returns the number of edge sets. */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_ES, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
@@ -979,21 +741,21 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
   case EX_INQ_FACE:
     /* returns the number of faces (defined across all face blocks). */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_FACE, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
   case EX_INQ_FACE_BLK:
     /* returns the number of face blocks. */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_FA_BLK, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
   case EX_INQ_FACE_SETS:
     /* returns the number of face sets. */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_FS, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
@@ -1025,7 +787,7 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
   case EX_INQ_ELEM_SETS:
     /* returns the number of element sets. */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_ELS, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
@@ -1050,31 +812,31 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
   case EX_INQ_EDGE_MAP:
     /* returns the number of edge maps. */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_EDM, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
   case EX_INQ_FACE_MAP:
     /*     returns the number of face maps. */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_FAM, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
   case EX_INQ_COORD_FRAMES:
     /* return the number of coordinate frames */
     if (ex_get_dimension_value(exoid, ret_int, 0, DIM_NUM_CFRAMES, 1) != EX_NOERR) {
-      return EX_FATAL;
+      return (EX_FATAL);
     }
     break;
 
   case EX_INQ_NUM_CHILD_GROUPS: {
-/* return number of groups contained in this (exoid) group */
+    /* return number of groups contained in this (exoid) group */
+    int tmp_num = 0;
 #if NC_HAS_HDF5
-    int tmp_num;
     nc_inq_grps(exoid, &tmp_num, NULL);
-    *ret_int = tmp_num;
 #endif
+    *ret_int = tmp_num;
   } break;
 
   case EX_INQ_GROUP_PARENT: {
@@ -1083,6 +845,8 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
     int tmp_num = exoid;
     nc_inq_grp_parent(exoid, &tmp_num);
     *ret_int = tmp_num;
+#else
+    *ret_int = exoid;
 #endif
   } break;
 
@@ -1093,12 +857,12 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
     break;
 
   case EX_INQ_GROUP_NAME_LEN: {
-#if NC_HAS_HDF5
     size_t len_name = 0;
+#if NC_HAS_HDF5
     /* return name length of group exoid */
     nc_inq_grpname_len(exoid, &len_name);
-    *ret_int = (int)len_name;
 #endif
+    *ret_int = (int)len_name;
   } break;
 
   case EX_INQ_GROUP_NAME:
@@ -1108,7 +872,7 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
       snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: Requested group name, but character pointer was "
                                        "null for file id %d",
                exoid);
-      ex_err("ex_inquire", errmsg, exerrval);
+      ex_err("ex_inquire", errmsg, EX_BADPARAM);
       return (EX_FATAL);
     }
 #if NC_HAS_HDF5
@@ -1117,16 +881,16 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
     break;
 
   case EX_INQ_FULL_GROUP_NAME_LEN: {
-#if NC_HAS_HDF5
     size_t len_name = 0;
+#if NC_HAS_HDF5
     /* return length of full group name which is the "/" separated path from
      * root
      * For example "/group1/subgroup1/subsubgroup1"
      * length does not include the NULL terminator byte.
      */
     nc_inq_grpname_full(exoid, &len_name, NULL);
-    *ret_int = (int)len_name;
 #endif
+    *ret_int = (int)len_name;
   } break;
 
   case EX_INQ_FULL_GROUP_NAME:
@@ -1139,7 +903,7 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
       snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: Requested group name, but character pointer was "
                                        "null for file id %d",
                exoid);
-      ex_err("ex_inquire", errmsg, exerrval);
+      ex_err("ex_inquire", errmsg, EX_BADPARAM);
       return (EX_FATAL);
     }
 #if NC_HAS_HDF5
@@ -1147,11 +911,21 @@ static int ex_inquire_internal(int exoid, int req_info, int64_t *ret_int, float 
 #endif
     break;
 
+  case EX_INQ_THREADSAFE:
+/* Return 1 if the library was compiled in thread-safe mode.
+ * Return 0 otherwise
+ */
+#if defined(EXODUS_THREADSAFE)
+    *ret_int = 1;
+#else
+    *ret_int = 0;
+#endif
+    break;
+
   default:
     *ret_int = 0;
-    exerrval = EX_FATAL;
     snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: invalid inquiry %d", req_info);
-    ex_err("ex_inquire", errmsg, exerrval);
+    ex_err("ex_inquire", errmsg, EX_BADPARAM);
     return (EX_FATAL);
   }
   return (EX_NOERR);
@@ -1169,13 +943,13 @@ ex_create() or ex_open().
  As an example, the following will return the number of nodes,
  elements, and element blocks stored in the exodus file :
 
-\code
+~~~{.c}
 #include "exodusII.h"
 int exoid;
 int num_nodes = ex_inquire_int(exoid, EX_INQ_NODES);
 int num_elems = ex_inquire_int(exoid, EX_INQ_ELEM);
 int num_block = ex_inquire_int(exoid, EX_INQ_ELEM_BLK);
-\endcode
+~~~
 
 */
 int64_t ex_inquire_int(int exoid, int req_info)
@@ -1183,23 +957,234 @@ int64_t ex_inquire_int(int exoid, int req_info)
   char *  cdummy  = NULL; /* Needed just for function call, unused. */
   float   fdummy  = 0;    /* Needed just for function call, unused. */
   int64_t ret_val = 0;
-  int     error   = ex_inquire_internal(exoid, req_info, &ret_val, &fdummy, cdummy);
+  int     error;
+  EX_FUNC_ENTER();
+  error = ex_inquire_internal(exoid, req_info, &ret_val, &fdummy, cdummy);
   if (error < 0) {
     ret_val = error;
   }
-
-  return ret_val;
+  EX_FUNC_LEAVE(ret_val);
 }
+
+/*!
+The function ex_inquire() is used to inquire values of certain
+data entities in an exodus file. Memory must be allocated for the
+returned values before this function is invoked.query database. \sa
+ex_inquire_int().
+
+\return In case of an error, ex_inquire() returns a negative
+        number; a warning will return a positive number.
+        Possible causes of errors include:
+  -  data file not properly opened with call to ex_create() or ex_open().
+  -  requested information not stored in the file.
+  -  invalid request flag.
+
+\param[in] exoid     exodus file ID returned from a previous call to ex_create()
+or ex_open().
+\param[in] req_info  A flag which designates what information is requested. It
+                     must be one of the following constants in the table below.
+
+\param[out]  ret_int   Returned integer, if an integer value is requested
+                       (according to req_info); otherwise, supply a dummy argument.
+
+\param[out]  ret_float Returned float, if a float value is requested
+                       (according to req_info); otherwise, supply a dummy
+                       argument. This argument is always a float even if the
+                       database IO and/or CPU word size is a double.
+
+\param[out]  ret_char  Returned character string, if a character value is
+                       requested (according to req_info);
+                       otherwise, supply a dummy argument.
+
+<table>
+<tr><td>EX_INQ_API_VERS</td><td> The exodus API version number is returned
+ in ret_float and an undotted version number is returned in
+ ret_int. The API version number reflects the release of the
+ function library (i.e., function names, argument list, etc.). The API
+ and LIB version numbers are synchronized and will always
+ match. Initially, it was thought that maintaining the two versions
+ separately would be a benefit, but that was more confusing than
+ helpful, so the numbers were made the same.</td></tr>
+
+ <tr><td> EX_INQ_DB_VERS </td><td> The exodus database version number is
+ returned in ret_float and an ``undotted'' version number is
+ returned in ret_int. The database version number reflects the
+ version of the library that was used to \e write the file pointed to by
+ exoid. </td></tr>
+
+ <tr><td> EX_INQ_LIB_VERS  </td><td>The exodus library version number is
+ returned in ret_float and an undotted version number is
+ returned in ret_int. The API library version number reflects
+ the version number of the exodus library linked with this
+ application. </td></tr>
+
+ <tr><td> EX_INQ_TITLE  </td><td>The title stored in the database is returned
+in ret_char. </td></tr>
+
+ <tr><td> EX_INQ_DIM  </td><td>The dimensionality, or number of coordinates
+ per node (1, 2 or 3), of the database is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_NODES  </td><td>The number of nodes is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ELEM  </td><td>The number of elements is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ELEM_BLK  </td><td>The number of element blocks is returned
+in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_NODE_SETS  </td><td>The number of node sets is returned in
+ret_int. </td></tr>
+
+ <tr><td> EX_INQ_NS_NODE_LEN  </td><td>The length of the concatenated node
+ sets node list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_NS_DF_LEN  </td><td>The length of the concatenated node
+ sets distribution list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_SIDE_SETS  </td><td>The number of side sets is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_SS_ELEM_LEN  </td><td>The length of the concatenated side
+ sets element list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_SS_DF_LEN  </td><td>The length of the concatenated side
+ sets distribution factor list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_SS_NODE_LEN  </td><td>The aggregate length of all of the
+ side sets node lists is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_EB_PROP  </td><td>The number of integer properties stored
+ for each element block is returned in ret_int; this number
+ includes the property named ID. </td></tr>
+
+ <tr><td> EX_INQ_NS_PROP  </td><td>The number of integer properties stored
+ for each node set is returned in ret_int; this number includes
+ the property named ID. </td></tr>
+
+ <tr><td> EX_INQ_SS_PROP  </td><td>The number of integer properties stored
+ for each side set is returned in ret_int; this number includes
+ the property named ID. </td></tr>
+
+ <tr><td> EX_INQ_QA  </td><td>The number of QA records is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_INFO  </td><td>The number of information records is returned
+ in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_TIME  </td><td>The number of time steps stored in the
+ database is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_EDGE_BLK   </td><td>The number of edge blocks is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_EDGE_MAP   </td><td>The number of edge maps is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_EDGE_PROP   </td><td>The number of properties stored per
+ edge blockis returned in ret_int.  </td></tr>
+
+ <tr><td> EX_INQ_EDGE_SETS   </td><td>The number of edge sets is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_EDGE   </td><td>The number of edges is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_FACE   </td><td>The number of faces is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_EB_PROP   </td><td>The number of element block properties is
+ returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ELEM_MAP   </td><td>The number of element maps is returned
+ in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ELEM_SETS   </td><td>The number of element sets is returned
+ in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ELS_DF_LEN   </td><td>The length of the concatenated
+ element set distribution factor list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ELS_LEN   </td><td>The length of the concatenated element
+ set element list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ELS_PROP   </td><td>The number of properties stored per elem
+ set is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_EM_PROP   </td><td>The number of element map properties is
+ returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ES_DF_LEN   </td><td>The length of the concatenated edge
+ set distribution factor list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ES_LEN   </td><td>The length of the concatenated edge set
+ edge list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_ES_PROP   </td><td>The number of properties stored per edge
+ set is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_FACE_BLK   </td><td>The number of face blocks is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_FACE_MAP   </td><td>The number of face maps is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_FACE_PROP   </td><td>The number of properties stored per
+ face block is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_FACE_SETS   </td><td>The number of face sets is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_FS_DF_LEN   </td><td>The length of the concatenated face
+ set distribution factor list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_FS_LEN   </td><td>The length of the concatenated face set
+ face list is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_FS_PROP   </td><td>The number of properties stored per face
+ set is returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_NM_PROP   </td><td>The number of node map properties is
+ returned in ret_int. </td></tr>
+
+ <tr><td> EX_INQ_NODE_MAP   </td><td>The number of node maps is returned in
+ ret_int. </td></tr>
+
+ <tr><td> EX_INQ_COORD_FRAMES </td><td>The number of coordinate frames is
+returned in ret_int. </td></tr>
+</table>
+
+As an example, the following will return the number of element
+block properties stored in the exodus file :
+
+~~~{.c}
+#include "exodusII.h"
+int error, exoid, num_props;
+float fdum;
+char *cdum;
+
+\comment{determine the number of element block properties}
+error = ex_inquire (exoid, EX_INQ_EB_PROP, &num_props,
+                    &fdum, cdum);
+
+\comment{...Another way to get the same information}
+num_props = ex_inquire_int(exoid, EX_INQ_EB_PROP);
+~~~
+
+*/
 
 int ex_inquire(int exoid, int req_info, void_int *ret_int, float *ret_float, char *ret_char)
 {
+  int ierr;
   if (ex_int64_status(exoid) & EX_INQ_INT64_API) {
-    return ex_inquire_internal(exoid, req_info, ret_int, ret_float, ret_char);
+    EX_FUNC_ENTER();
+    ierr = ex_inquire_internal(exoid, req_info, ret_int, ret_float, ret_char);
+    EX_FUNC_LEAVE(ierr);
   }
   /* ret_int is a 32-bit int */
   int64_t tmp_int;
   int *   return_int = ret_int;
-  int     ierr       = ex_inquire_internal(exoid, req_info, &tmp_int, ret_float, ret_char);
-  *return_int        = (int)tmp_int;
-  return ierr;
+
+  EX_FUNC_ENTER();
+  ierr        = ex_inquire_internal(exoid, req_info, &tmp_int, ret_float, ret_char);
+  *return_int = (int)tmp_int;
+  EX_FUNC_LEAVE(ierr);
 }

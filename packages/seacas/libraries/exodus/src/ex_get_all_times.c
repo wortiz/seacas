@@ -33,7 +33,7 @@
  *
  */
 
-#include "exodusII.h"     // for exerrval, ex_err, etc
+#include "exodusII.h"     // for ex_err, etc
 #include "exodusII_int.h" // for EX_FATAL, VAR_WHOLE_TIME, etc
 #include "netcdf.h"       // for NC_NOERR, nc_get_var_double, etc
 #include <stdio.h>
@@ -47,8 +47,8 @@ time steps) can be determined by using the ex_inquire() or
 ex_inquire_int() routines.
 
 Because time values are floating point values, the application code
-must declare the array passed to be the appropriate type (\c float or
-\c double) to match the compute word size passed in ex_create() or
+must declare the array passed to be the appropriate type (float or
+double) to match the compute word size passed in ex_create() or
 ex_open().
 
 \return In case of an error, ex_get_all_times() returns a negative
@@ -65,7 +65,7 @@ all time steps.
 The following code segment will read the time values for all time
 steps stored in the data file:
 
-\code
+~~~{.c}
 int error, exoid, num_time_steps;
 float *time_values;
 
@@ -76,7 +76,7 @@ num_time_steps = ex_inquire_int(exoid, EX_INQ_TIME);
 time_values = (float *) calloc(num_time_steps, sizeof(float));
 
 error = ex_get_all_times(exoid, time_values);
-\endcode
+~~~
 
 */
 
@@ -86,14 +86,14 @@ int ex_get_all_times(int exoid, void *time_values)
   int  status;
   char errmsg[MAX_ERR_LENGTH];
 
-  exerrval = 0;
+  EX_FUNC_ENTER();
+  ex_check_valid_file_id(exoid);
 
   if ((status = nc_inq_varid(exoid, VAR_WHOLE_TIME, &varid)) != NC_NOERR) {
-    exerrval = status;
     snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to locate time variable %s in file id %d",
              VAR_WHOLE_TIME, exoid);
-    ex_err("ex_get_all_times", errmsg, exerrval);
-    return (EX_FATAL);
+    ex_err("ex_get_all_times", errmsg, status);
+    EX_FUNC_LEAVE(EX_FATAL);
   }
 
   /*read time values */
@@ -105,11 +105,10 @@ int ex_get_all_times(int exoid, void *time_values)
   }
 
   if (status != NC_NOERR) {
-    exerrval = status;
     snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to get time values from file id %d", exoid);
-    ex_err("ex_get_all_times", errmsg, exerrval);
-    return (EX_FATAL);
+    ex_err("ex_get_all_times", errmsg, status);
+    EX_FUNC_LEAVE(EX_FATAL);
   }
 
-  return (EX_NOERR);
+  EX_FUNC_LEAVE(EX_NOERR);
 }
