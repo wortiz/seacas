@@ -18,6 +18,12 @@ else
 # CC=clang
 fi
 
+### Define to NO to *enable* exodus deprecated functions
+OMIT_DEPRECATED_CODE="NO"
+
+### Set to ON to enable the building of a thread-safe version of the Exodus libraries.
+THREADSAFE_IO_LIBS=OFF
+
 rm -f CMakeCache.txt
 
 cmake  \
@@ -30,6 +36,7 @@ cmake  \
 -D CMAKE_C_COMPILER:FILEPATH=${CC} \
 -D TPL_ENABLE_Netcdf:BOOL=ON \
 -D TPL_ENABLE_MPI=${MPI} \
+-D SEACASExodus_ENABLE_THREADSAFE:BOOL=${THREADSAFE_IO_LIBS} \
 \
 -D NetCDF_DIR:PATH=${TPL} \
 -D HDF5_ROOT:PATH=${TPL} \
