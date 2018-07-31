@@ -27,9 +27,9 @@ else
   CC=mpicc
 fi
 MPICC=$(CC); export MPICC
-CFLAGS='-fPIC -I${ACCESS}/include'; export CFLAGS
-CPPFLAGS='-DNDEBUG'; export CPPFLAGS
-AR_FLAGS='cru'; export AR_FLAGS
+export CFLAGS="-fPIC -I${ACCESS}/include"
+export CPPFLAGS="-DNDEBUG"
+export AR_FLAGS="cru"
 
 LDFLAGS='-L${ACCESS}/lib'; export LDFLAGS
 ./configure --disable-fortran ${USE_SHARED} --disable-cxx --prefix=${ACCESS}
