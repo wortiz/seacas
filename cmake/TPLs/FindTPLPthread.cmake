@@ -53,67 +53,30 @@
 # ************************************************************************
 # @HEADER
 
-# Check for CUDA support
 
-SET(_CUDA_FAILURE OFF)
+SET(USE_THREADS FALSE)
 
-# Have CMake find CUDA
-IF(NOT _CUDA_FAILURE)
-  FIND_PACKAGE(CUDA REQUIRED)
-  IF (NOT CUDA_FOUND)
-    SET(_CUDA_FAILURE ON)
+IF(NOT TPL_Pthread_INCLUDE_DIRS AND NOT TPL_Pthread_LIBRARY_DIRS AND NOT TPL_Pthread_LIBRARIES)
+  # Use CMake's Thread finder since it is a bit smarter in determining
+  # whether pthreads is already built into the compiler and doesn't need
+  # a library to link.
+  FIND_PACKAGE(Threads)
+  #If Threads found a copy of pthreads make sure it is one of the cases the tribits
+  #tpl system cannot handle.
+  IF(Threads_FOUND AND CMAKE_USE_PTHREADS_INIT)
+    IF(CMAKE_THREAD_LIBS_INIT STREQUAL "" OR CMAKE_THREAD_LIBS_INIT STREQUAL "-pthread")
+      SET(USE_THREADS TRUE)
+    ENDIF()
   ENDIF()
 ENDIF()
 
-# # Test that CUDA compiler works
-# IF(NOT _CUDA_FAILURE)
-#   INCLUDE(TrilinosCUDASupport)
-#   SET(SRC "
-#     #include <cuda_runtime.h>
-#     __global__ void vecAdd(const float* a, const float* b, float* c, int N)
-#     {
-#         int i = blockDim.x * blockIdx.x + threadIdx.x;
-#         if (i < N) c[i] = a[i] + b[i];
-#     }
-#     __global__ void vecInit(float* x, float val, int N)
-#     {
-#         int i = blockDim.x * blockIdx.x + threadIdx.x;
-#         if (i < N) x[i] = val;
-#     }
-#     int main() {
-#         const int N               = 2048;
-#         const int threadsPerBlock = 256;
-#         const int blocksPerGrid   = 8;
-#         float* a = NULL;
-#         float* b = NULL;
-#         float* c = NULL;
-#         cudaMalloc((void**)&a, N);
-#         cudaMalloc((void**)&b, N);
-#         cudaMalloc((void**)&c, N);
-#         // init
-#         vecInit<<<blocksPerGrid, threadsPerBlock>>>(a,1.0f,N);
-#         vecInit<<<blocksPerGrid, threadsPerBlock>>>(b,2.0f,N);
-#         vecInit<<<blocksPerGrid, threadsPerBlock>>>(c,0.0f,N);
-#         // run
-#         vecAdd<<<blocksPerGrid, threadsPerBlock>>>(a, b, c, N);
-#     }
-#   ")
-#   CHECK_CUDA_SOURCE_COMPILES(${SRC} _NVCC_SUCCESS)
-#   IF(NOT _NVCC_SUCCESS)
-#     SET(_CUDA_FAILURE ON)
-#   ENDIF()
-# ENDIF()
-
-IF(NOT _CUDA_FAILURE)
-  # if we haven't met failure
-  macro(PACKAGE_ADD_CUDA_LIBRARY cuda_target)
-    TRIBITS_ADD_LIBRARY(${cuda_target} ${ARGN} CUDALIBRARY)
-  endmacro()
-  GLOBAL_SET(TPL_CUDA_LIBRARY_DIRS)
-  GLOBAL_SET(TPL_CUDA_INCLUDE_DIRS ${CUDA_TOOLKIT_INCLUDE})
-  GLOBAL_SET(TPL_CUDA_LIBRARIES ${CUDA_CUDART_LIBRARY} ${CUDA_cublas_LIBRARY}
-     ${CUDA_cufft_LIBRARY})
+IF(USE_THREADS)
+  SET(TPL_Pthread_INCLUDE_DIRS "")
+  SET(TPL_Pthread_LIBRARIES "${CMAKE_THREAD_LIBS_INIT}")
+  SET(TPL_Pthread_LIBRARY_DIRS "")
 ELSE()
-  SET(TPL_ENABLE_CUDA OFF PARENT_SCOPE)
-  MESSAGE(FATAL_ERROR "\nDid not find acceptable version of CUDA compiler")
+  TRIBITS_TPL_FIND_INCLUDE_DIRS_AND_LIBRARIES( Pthread
+    REQUIRED_HEADERS pthread.h
+    REQUIRED_LIBS_NAMES pthread
+      )
 ENDIF()
