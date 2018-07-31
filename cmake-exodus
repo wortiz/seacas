@@ -95,7 +95,7 @@ function check_enable()
 HAVE_NETCDF=`check_enable "${NETCDF_PATH}/include/netcdf.h"`
 
 ### Define to NO to *enable* exodus deprecated functions
-OMIT_DEPRECATED_CODE="NO"
+OMIT_DEPRECATED_CODE=${OMIT_DEPRECATED_CODE:-NO}
 
 # BUG needs to work with cray too.
 if [ "${MPI}" == "ON" ] && [ "${CRAY}" == "ON" ]
