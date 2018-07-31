@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2005 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,27 +33,27 @@
  *
  */
 /*****************************************************************************
-*
-* testwt - test write an ExodusII database file
-*
-* author - Sandia National Laboratories
-*          Larry A. Schoof - Original
-*          Vic Yarberry    - Added headers and error logging
-*               7/7/93          Modified for use with Exodus 2.00
-*
-*
-* environment - UNIX
-*
-* entry conditions -
-*
-* exit conditions -
-*
-* revision history -
-*
-*  This is a test program for the C binding of the EXODUS II
-*  database write routines.
-*
-*****************************************************************************/
+ *
+ * testwt - test write an ExodusII database file
+ *
+ * author - Sandia National Laboratories
+ *          Larry A. Schoof - Original
+ *          Vic Yarberry    - Added headers and error logging
+ *               7/7/93          Modified for use with Exodus 2.00
+ *
+ *
+ * environment - UNIX
+ *
+ * entry conditions -
+ *
+ * exit conditions -
+ *
+ * revision history -
+ *
+ *  This is a test program for the C binding of the EXODUS II
+ *  database write routines.
+ *
+ *****************************************************************************/
 
 #include "exodusII.h"
 #include <stdio.h>
@@ -113,6 +113,42 @@ int main(int argc, char **argv)
                       num_node_sets, num_side_sets);
 
   printf("after ex_put_init, error = %d\n", error);
+
+  if (error) {
+    ex_close(exoid);
+    exit(-1);
+  }
+
+  /* write QA records; test empty and just blank-filled records */
+  num_qa_rec = 2;
+
+  qa_record[0][0] = "TESTWT";
+  qa_record[0][1] = "testwt";
+  qa_record[0][2] = "07/07/93";
+  qa_record[0][3] = "15:41:33";
+  qa_record[1][0] = "";
+  qa_record[1][1] = "                            ";
+  qa_record[1][2] = "";
+  qa_record[1][3] = "                        ";
+
+  error = ex_put_qa(exoid, num_qa_rec, qa_record);
+  printf("after ex_put_qa, error = %d\n", error);
+
+  if (error) {
+    ex_close(exoid);
+    exit(-1);
+  }
+
+  /* write information records; test empty and just blank-filled records */
+
+  num_info = 3;
+
+  info[0] = "This is the first information record.";
+  info[1] = "";
+  info[2] = "                                     ";
+
+  error = ex_put_info(exoid, num_info, info);
+  printf("after ex_put_info, error = %d\n", error);
 
   if (error) {
     ex_close(exoid);
@@ -842,43 +878,6 @@ int main(int argc, char **argv)
     exit(-1);
   }
 
-  /* write QA records; test empty and just blank-filled records */
-
-  num_qa_rec = 2;
-
-  qa_record[0][0] = "TESTWT";
-  qa_record[0][1] = "testwt";
-  qa_record[0][2] = "07/07/93";
-  qa_record[0][3] = "15:41:33";
-  qa_record[1][0] = "";
-  qa_record[1][1] = "                            ";
-  qa_record[1][2] = "";
-  qa_record[1][3] = "                        ";
-
-  error = ex_put_qa(exoid, num_qa_rec, qa_record);
-  printf("after ex_put_qa, error = %d\n", error);
-
-  if (error) {
-    ex_close(exoid);
-    exit(-1);
-  }
-
-  /* write information records; test empty and just blank-filled records */
-
-  num_info = 3;
-
-  info[0] = "This is the first information record.";
-  info[1] = "";
-  info[2] = "                                     ";
-
-  error = ex_put_info(exoid, num_info, info);
-  printf("after ex_put_info, error = %d\n", error);
-
-  if (error) {
-    ex_close(exoid);
-    exit(-1);
-  }
-
   /* write results variables parameters and names */
   num_glo_vars  = 1;
   num_nod_vars  = 2;
@@ -900,27 +899,30 @@ int main(int argc, char **argv)
   k = 0;
   for (i = 0; i < num_node_sets; i++) {
     for (j = 0; j < num_nset_vars; j++) {
-      if (k % 2 == 0)
+      if (k % 2 == 0) {
         nset_tab[k++] = 1;
-      else
+      }
+      else {
         nset_tab[k++] = 0;
+      }
     }
   }
 
   k = 0;
   for (i = 0; i < num_side_sets; i++) {
     for (j = 0; j < num_sset_vars; j++) {
-      if (k % 2 == 0)
+      if (k % 2 == 0) {
         sset_tab[k++] = 0;
-      else
+      }
+      else {
         sset_tab[k++] = 1;
+      }
     }
   }
 
   ex_put_all_var_param(exoid, num_glo_vars, num_nod_vars, num_ele_vars, truth_tab, num_nset_vars,
                        nset_tab, num_sset_vars, sset_tab);
   printf("after ex_put_all_var_param, error = %d\n", error);
-
   if (error) {
     ex_close(exoid);
     exit(-1);

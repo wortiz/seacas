@@ -1,11 +1,13 @@
 #! /bin/sh
 
+### The following assumes you are building in a subdirectory of ACCESS Root
 if [ "X$ACCESS" == "X" ] ; then
-  echo "ERROR: Please set the ACCESS environment variable before executing this script."
-  exit
+  ACCESS=$(cd ../../..; pwd)
+  echo "ACCESS set to ${ACCESS}"
 fi
 
-PARALLEL=0
+MPI="${MPI:-OFF}"
+PARALLEL="${MPI:-OFF}"
 
 rm -f config.cache
 export CFLAGS="-I${ACCESS}/include"
@@ -14,7 +16,7 @@ export CPPFLAGS="-DNDEBUG"
 # Find the hdf5 library
 export LDFLAGS="-L${ACCESS}/lib"
 
-if [ $PARALLEL == 0 ] ; then
+if [ "$PARALLEL" == "OFF" ] ; then
   export CC='gcc'
   PNETCDF=""
   PARALLEL_TESTS=""
@@ -27,3 +29,9 @@ fi
 SHARED="--enable-shared"
 
 ./configure --enable-netcdf-4 ${PNETCDF} ${SHARED} ${PARALLEL_TESTS} --disable-v2 --disable-fsync --prefix=${ACCESS} --disable-dap $1
+
+echo ""
+echo "     MPI: ${MPI}"
+echo "COMPILER: ${CC}"
+echo "  ACCESS: ${ACCESS}"
+echo ""

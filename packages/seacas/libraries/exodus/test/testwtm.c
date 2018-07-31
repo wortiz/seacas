@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2005 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,28 +33,28 @@
  *
  */
 /*****************************************************************************
-*
-* testwtm - test write many ExodusII database files
-*
-* author - Sandia National Laboratories
-*          Larry A. Schoof - Original
-*          Vic Yarberry    - Added headers and error logging
-*               7/7/93          Modified for use with Exodus 2.00
-*
-*
-* environment - UNIX
-*
-* entry conditions -
-*
-* exit conditions -
-*
-* revision history -
-*
-*  This is a test program for the C binding of the EXODUS II
-*  database write routines. It tests multiple simultaneous output files.
-*
-*
-*****************************************************************************/
+ *
+ * testwtm - test write many ExodusII database files
+ *
+ * author - Sandia National Laboratories
+ *          Larry A. Schoof - Original
+ *          Vic Yarberry    - Added headers and error logging
+ *               7/7/93          Modified for use with Exodus 2.00
+ *
+ *
+ * environment - UNIX
+ *
+ * entry conditions -
+ *
+ * exit conditions -
+ *
+ * revision history -
+ *
+ *  This is a test program for the C binding of the EXODUS II
+ *  database write routines. It tests multiple simultaneous output files.
+ *
+ *
+ *****************************************************************************/
 
 #define EX_TEST_INDIV_NODESET
 #define EX_TEST_INDIV_SIDESET
@@ -1365,7 +1365,7 @@ int main(int argc, char **argv)
     printf("after ex_put_prop (%d), error = %d\n", n, error);
   }
 
-/* END COMMENTED OUT SECTION */
+  /* END COMMENTED OUT SECTION */
 
 #endif /* TEST_INDIV_SIDESET */
 

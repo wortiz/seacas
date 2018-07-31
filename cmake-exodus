@@ -1,3 +1,5 @@
+#!/bin/bash
+
 EXTRA_ARGS=$@
 
 ### The following assumes you are building in a subdirectory of ACCESS Root
@@ -38,7 +40,7 @@ cmake  \
 -D TPL_ENABLE_MPI=${MPI} \
 -D SEACASExodus_ENABLE_THREADSAFE:BOOL=${THREADSAFE_IO_LIBS} \
 \
--D NetCDF_DIR:PATH=${TPL} \
+-D NetCDF_ROOT:PATH=${TPL} \
 -D HDF5_ROOT:PATH=${TPL} \
 -D HDF5_NO_SYSTEM_PATHS=ON \
 \

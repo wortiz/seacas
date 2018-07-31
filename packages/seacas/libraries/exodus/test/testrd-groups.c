@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2013 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,25 +33,25 @@
  *
  */
 /*****************************************************************************
-*
-* testrd - read exodus file test.exo created by testwt
-*
-* author - Sandia National Laboratories
-*          Larry A. Schoof - Original
-*
-*
-* environment - UNIX
-*
-* entry conditions -
-*   input parameters:
-*       int     exoid                   exodus file id
-*
-* exit conditions -
-*
-* revision history -
-*
-*
-*****************************************************************************/
+ *
+ * testrd - read exodus file test.exo created by testwt
+ *
+ * author - Sandia National Laboratories
+ *          Larry A. Schoof - Original
+ *
+ *
+ * environment - UNIX
+ *
+ * entry conditions -
+ *   input parameters:
+ *       int     exoid                   exodus file id
+ *
+ * exit conditions -
+ *
+ * revision history -
+ *
+ *
+ *****************************************************************************/
 
 #include "exodusII.h"
 #include "netcdf.h"
@@ -374,7 +374,7 @@ int main(int argc, char **argv)
 
     for (i = 0; i < num_elem_blk; i++) {
       if (num_elem_in_block[i] > 0) {
-        for (j            = 0; j < num_attr[i]; j++)
+        for (j = 0; j < num_attr[i]; j++)
           attrib_names[j] = (char *)calloc((MAX_STR_LENGTH + 1), sizeof(char));
 
         attrib = (float *)calloc(num_attr[i] * num_elem_in_block[i], sizeof(float));

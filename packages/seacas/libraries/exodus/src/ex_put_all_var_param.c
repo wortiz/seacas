@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,39 +33,39 @@
  *
  */
 /*****************************************************************************
-*
-* expvp - ex_put_all_var_param
-*
-* entry conditions -
-*   input parameters:
-*       int     exoid           exodus file id
-*       int     num_g           global variable count
-*       int     num_n           nodal variable count
-*       int     num_e           element variable count
-*       int*    elem_var_tab    element variable truth table array
-*       int     num_m           nodeset variable count
-*       int*    nset_var_tab    nodeset variable truth table array
-*       int     num_s           sideset variable count
-*       int*    sset_var_tab    sideset variable truth table array
-*
-* exit conditions -
-*
-*****************************************************************************/
+ *
+ * expvp - ex_put_all_var_param
+ *
+ * entry conditions -
+ *   input parameters:
+ *       int     exoid           exodus file id
+ *       int     num_g           global variable count
+ *       int     num_n           nodal variable count
+ *       int     num_e           element variable count
+ *       int*    elem_var_tab    element variable truth table array
+ *       int     num_m           nodeset variable count
+ *       int*    nset_var_tab    nodeset variable truth table array
+ *       int     num_s           sideset variable count
+ *       int*    sset_var_tab    sideset variable truth table array
+ *
+ * exit conditions -
+ *
+ *****************************************************************************/
 
 #include "exodusII.h" // for ex_var_params, etc
 
 /*!
  * defines the number of global, nodal, element, nodeset, and sideset variables
  * that will be written to the database
-*  \param     exoid           exodus file id
-*  \param     num_g           global variable count
-*  \param     num_n           nodal variable count
-*  \param     num_e           element variable count
-*  \param    *elem_var_tab    element variable truth table array
-*  \param     num_m           nodeset variable count
-*  \param    *nset_var_tab    nodeset variable truth table array
-*  \param     num_s           sideset variable count
-*  \param    *sset_var_tab    sideset variable truth table array
+ *  \param     exoid           exodus file id
+ *  \param     num_g           global variable count
+ *  \param     num_n           nodal variable count
+ *  \param     num_e           element variable count
+ *  \param    *elem_var_tab    element variable truth table array
+ *  \param     num_m           nodeset variable count
+ *  \param    *nset_var_tab    nodeset variable truth table array
+ *  \param     num_s           sideset variable count
+ *  \param    *sset_var_tab    sideset variable truth table array
  */
 
 int ex_put_all_var_param(int exoid, int num_g, int num_n, int num_e, int *elem_var_tab, int num_m,

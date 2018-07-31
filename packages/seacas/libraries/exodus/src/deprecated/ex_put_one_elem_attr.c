@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,23 +33,23 @@
  *
  */
 /*****************************************************************************
-*
-* expoea - ex_put_one_elem_attr
-*
-* entry conditions -
-*   input parameters:
-*       int     exoid                   exodus file id
-*       int     elem_blk_id             element block id
-*       int     attrib_index            index of attribute to write
-*       float*  attrib                  array of attributes
-*
-* exit conditions -
-*
-* revision history -
-*   20061003 - David Thompson - moved to ex_put_one_attr
-*
-*
-*****************************************************************************/
+ *
+ * expoea - ex_put_one_elem_attr
+ *
+ * entry conditions -
+ *   input parameters:
+ *       int     exoid                   exodus file id
+ *       int     elem_blk_id             element block id
+ *       int     attrib_index            index of attribute to write
+ *       float*  attrib                  array of attributes
+ *
+ * exit conditions -
+ *
+ * revision history -
+ *   20061003 - David Thompson - moved to ex_put_one_attr
+ *
+ *
+ *****************************************************************************/
 
 #include "exodusII.h" // for ex_put_one_attr, etc
 

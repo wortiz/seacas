@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,27 +33,27 @@
  *
  */
 /*****************************************************************************
-*
-* exgini - ex_get_init
-*
-* entry conditions -
-*   input parameters:
-*       int     exoid                   exodus file id
-*
-* exit conditions -
-*       char*   title                   title of file
-*       int*    num_dim                 number of dimensions (per node)
-*       int*    num_nodes               number of nodes
-*       int*    num_elem                number of elements
-*       int*    num_elem_blk            number of element blocks
-*       int*    num_node_sets           number of node sets
-*       int*    num_side_sets           numver of side sets
-*
-* revision history -
-*          David Thompson  - Moved to exginix.c (exgini.c now a special case)
-*
-*
-*****************************************************************************/
+ *
+ * exgini - ex_get_init
+ *
+ * entry conditions -
+ *   input parameters:
+ *       int     exoid                   exodus file id
+ *
+ * exit conditions -
+ *       char*   title                   title of file
+ *       int*    num_dim                 number of dimensions (per node)
+ *       int*    num_nodes               number of nodes
+ *       int*    num_elem                number of elements
+ *       int*    num_elem_blk            number of element blocks
+ *       int*    num_node_sets           number of node sets
+ *       int*    num_side_sets           numver of side sets
+ *
+ * revision history -
+ *          David Thompson  - Moved to exginix.c (exgini.c now a special case)
+ *
+ *
+ *****************************************************************************/
 
 #include "exodusII.h" // for ex_init_params, void_int, etc
 #include "exodusII_int.h"
@@ -107,7 +107,7 @@ int ex_get_init(int exoid, char *title, void_int *num_dim, void_int *num_nodes, 
   int            errval;
 
   EX_FUNC_ENTER();
-  ex_check_valid_file_id(exoid);
+  ex_check_valid_file_id(exoid, __func__);
 
   info.title[0] = '\0';
   errval        = ex_get_init_ext(exoid, &info);

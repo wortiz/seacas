@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2006 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,31 +33,31 @@
  *
  */
 /*****************************************************************************
-*
-* expvar - ex_put_var
-*
-* entry conditions -
-*   input parameters:
-*       int     exoid                   exodus file id
-*       int     time_step               time step number
-*       int     var_type                type (edge block, face block, edge set,
-*... )
-*       int     var_index               element variable index
-*       int     obj_id                  element block id
-*       int     start_num               starting index of the variables to be
-*written
-*       int     num_ent                 number of entities to write variables
-*for.
-*
-* exit conditions -
-*
-*
-* exit conditions -
-*
-* revision history -
-*
-*
-*****************************************************************************/
+ *
+ * expvar - ex_put_var
+ *
+ * entry conditions -
+ *   input parameters:
+ *       int     exoid                   exodus file id
+ *       int     time_step               time step number
+ *       int     var_type                type (edge block, face block, edge set,
+ *... )
+ *       int     var_index               element variable index
+ *       int     obj_id                  element block id
+ *       int     start_num               starting index of the variables to be
+ *written
+ *       int     num_ent                 number of entities to write variables
+ *for.
+ *
+ * exit conditions -
+ *
+ *
+ * exit conditions -
+ *
+ * revision history -
+ *
+ *
+ *****************************************************************************/
 
 #include "exodusII.h" // for ex_put_partial_var, etc
 #include <stdint.h>   // for int64_t
@@ -65,7 +65,8 @@
 /*!
 \ingroup ResultsData
 
- * \deprecated use ex_put_partial_var() instead
+ * \deprecated use ex_put_partial_var()(exoid, time_step, var_type, var_index, obj_id, start_index,
+                            num_entities, var_vals)
  * writes the values of a single variable for a partial block at one time
  * step to the database; assume the first time step and variable index
  * are 1

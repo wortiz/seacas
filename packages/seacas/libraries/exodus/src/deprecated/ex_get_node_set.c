@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2005 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,21 +33,21 @@
  *
  */
 /*****************************************************************************
-*
-* exgns - ex_get_node_set
-*
-* entry conditions -
-*   input parameters:
-*       int     exoid                   exodus file id
-*       int     node_set_id             node set id
-*
-* exit conditions -
-*       int*    node_set_node_list      node list array for the node set
-*
-* revision history -
-*
-*
-*****************************************************************************/
+ *
+ * exgns - ex_get_node_set
+ *
+ * entry conditions -
+ *   input parameters:
+ *       int     exoid                   exodus file id
+ *       int     node_set_id             node set id
+ *
+ * exit conditions -
+ *       int*    node_set_node_list      node list array for the node set
+ *
+ * revision history -
+ *
+ *
+ *****************************************************************************/
 
 #include "exodusII.h" // for ex_get_set, ex_entity_id, etc
 #include <stdlib.h>   // for NULL

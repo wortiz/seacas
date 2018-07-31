@@ -1,6 +1,6 @@
-C    Copyright (c) 2014, Sandia Corporation.
-C    Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
-C    the U.S. Government retains certain rights in this software.
+C    Copyright (c) 2005-2017 National Technology & Engineering Solutions
+C    of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+C    NTESS, the U.S. Government retains certain rights in this software.
 C    
 C    Redistribution and use in source and binary forms, with or without
 C    modification, are permitted provided that the following conditions are
@@ -12,9 +12,9 @@ C
 C        * Redistributions in binary form must reproduce the above
 C          copyright notice, this list of conditions and the following
 C          disclaimer in the documentation and/or other materials provided
-C          with the distribution.
+C          with the distribution.  
 C    
-C        * Neither the name of Sandia Corporation nor the names of its
+C        * Neither the name of NTESS nor the names of its
 C          contributors may be used to endorse or promote products derived
 C          from this software without specific prior written permission.
 C    
@@ -53,7 +53,7 @@ c	09/07/93 V.R. Yarberry - Modified for API 2.00
       integer cpu_ws,io_ws, mod_sz
 
       real x(100), y(100), z(100)
-      real*4 vers
+      real vers
 
       character*(MXSTLN) coord_names(3)
       character*(MXLNLN) titl

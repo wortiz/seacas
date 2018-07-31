@@ -1,23 +1,23 @@
-C Copyright (c) 2005 Sandia Corporation. Under the terms of Contract
-C DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
-C retains certain rights in this software.
-C
+C Copyright (c) 2005-2017 National Technology & Engineering Solutions
+C of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+C NTESS, the U.S. Government retains certain rights in this software.
+C 
 C Redistribution and use in source and binary forms, with or without
 C modification, are permitted provided that the following conditions are
 C met:
-C
+C 
 C     * Redistributions of source code must retain the above copyright
 C       notice, this list of conditions and the following disclaimer.
-C
+C 
 C     * Redistributions in binary form must reproduce the above
 C       copyright notice, this list of conditions and the following
 C       disclaimer in the documentation and/or other materials provided
-C       with the distribution.
-C
-C     * Neither the name of Sandia Corporation nor the names of its
+C       with the distribution.  
+C 
+C     * Neither the name of NTESS nor the names of its
 C       contributors may be used to endorse or promote products derived
 C       from this software without specific prior written permission.
-C
+C 
 C THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 C "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 C LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,7 +29,7 @@ C DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 C THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 C (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 C OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-C
+C 
 
         SUBROUTINE ADRDUM
         END
@@ -1259,13 +1259,11 @@ C
         POINTER (PINCNT4, INCNT4)
         INTEGER*4 IERR4         ! (W)
 
-        integer*4 nsess4
-        integer*4 ndess4
+        INTEGER   NDESS
         INTEGER   NINCNT
 
         IDEXO4 = IDEXO
-        CALL EXGSP4 (IDEXO4, IDESS, NSESS4, NDESS4, IERR4)
-        NINCNT = NSESS4
+        CALL EXGSP4 (IDEXO4, IDESS, NINCNT, NDESS, IERR4)
         CALL I4ALLOC (NINCNT, PINCNT4)
 
         CALL EXGSSC4 (IDEXO4, IDESS, INCNT4, IERR4)
@@ -4031,12 +4029,16 @@ C
         INTEGER*4 I4 (1)
         POINTER (PI4, I4)
         INTEGER MALLOC
-        INTEGER NB
+        INTEGER*4 NB
 
         PI4 = 0
         IF (N .EQ. 0) RETURN
         NB = N * 4
+#if defined(__XLF__)
+        PI4 = MALLOC (%val(NB))
+#else
         PI4 = MALLOC (NB)
+#endif
         if (PI4 .EQ. 0) then
           write (*,*)
      *      'ERROR: Unable to allocate array of size ',N,' in I4ALLOC'
@@ -4053,8 +4055,8 @@ C
         POINTER (PI4, I4)
 
         IF (PI4 .EQ. 0) RETURN
-#ifndef __XLF__
-        CALL FREE (PI4)
+#if !defined(__XLF__)
+        CALL FREE(PI4)
 #endif
         PI4 = 0
         END

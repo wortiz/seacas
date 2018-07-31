@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2005 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -110,16 +110,17 @@ int ex_get_glob_var_time_int(int exoid, int glob_var_index, int beg_time_step, i
   char   errmsg[MAX_ERR_LENGTH];
 
   EX_FUNC_ENTER();
-  ex_check_valid_file_id(exoid);
+  ex_check_valid_file_id(exoid, __func__);
 
   /* Check that times are in range */
   {
     int num_time_steps = ex_inquire_int(exoid, EX_INQ_TIME);
     if (beg_time_step <= 0 || beg_time_step > num_time_steps) {
-      snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: beginning time_step is out-of-range. Value = %d, "
-                                       "valid range is 1 to %d in file id %d",
+      snprintf(errmsg, MAX_ERR_LENGTH,
+               "ERROR: beginning time_step is out-of-range. Value = %d, "
+               "valid range is 1 to %d in file id %d",
                beg_time_step, num_time_steps, exoid);
-      ex_err("ex_get_glob_var_time", errmsg, EX_BADPARAM);
+      ex_err(__func__, errmsg, EX_BADPARAM);
       EX_FUNC_LEAVE(EX_FATAL);
     }
 
@@ -131,10 +132,11 @@ int ex_get_glob_var_time_int(int exoid, int glob_var_index, int beg_time_step, i
       end_time_step = num_time_steps;
     }
     else if (end_time_step < beg_time_step || end_time_step > num_time_steps) {
-      snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: end time_step is out-of-range. Value = %d, valid "
-                                       "range is %d to %d in file id %d",
+      snprintf(errmsg, MAX_ERR_LENGTH,
+               "ERROR: end time_step is out-of-range. Value = %d, valid "
+               "range is %d to %d in file id %d",
                beg_time_step, end_time_step, num_time_steps, exoid);
-      ex_err("ex_get_glob_var_time", errmsg, EX_BADPARAM);
+      ex_err(__func__, errmsg, EX_BADPARAM);
       EX_FUNC_LEAVE(EX_FATAL);
     }
   }
@@ -151,7 +153,7 @@ int ex_get_glob_var_time_int(int exoid, int glob_var_index, int beg_time_step, i
   if ((status = nc_inq_varid(exoid, VAR_GLO_VAR, &varid)) != NC_NOERR) {
     snprintf(errmsg, MAX_ERR_LENGTH, "ERROR: failed to locate global variables in file id %d",
              exoid);
-    ex_err("ex_get_glob_var_time", errmsg, status);
+    ex_err(__func__, errmsg, status);
     EX_FUNC_LEAVE(EX_WARN);
   }
 
@@ -166,7 +168,7 @@ int ex_get_glob_var_time_int(int exoid, int glob_var_index, int beg_time_step, i
     snprintf(errmsg, MAX_ERR_LENGTH,
              "ERROR: failed to get global variable %d values from file id %d", glob_var_index,
              exoid);
-    ex_err("ex_get_glob_var_time", errmsg, status);
+    ex_err(__func__, errmsg, status);
     EX_FUNC_LEAVE(EX_FATAL);
   }
   EX_FUNC_LEAVE(EX_NOERR);

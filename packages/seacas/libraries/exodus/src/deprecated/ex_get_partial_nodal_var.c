@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 1998 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,27 +33,27 @@
  *
  */
 /*****************************************************************************
-*
-* exgnnv - ex_get_partial_nodal_var
-*
-* environment - UNIX
-*
-* entry conditions -
-*   input parameters:
-*	int	exoid			exodus file id
-*	int	time_step		whole time step number
-*	int	nodeal_var_index	index of desired nodal variable
-*       int     start_node		starting location for read
-*	int	num_nodes		number of nodal points
-*
-* exit conditions -
-*	float*	var_vals		array of nodal variable values
-*
-* revision history -
-*
-*  $Id: ne_gnnv.c,v 1.16 2008/01/25 15:47:35 gdsjaar Exp $
-*
-*****************************************************************************/
+ *
+ * exgnnv - ex_get_partial_nodal_var
+ *
+ * environment - UNIX
+ *
+ * entry conditions -
+ *   input parameters:
+ *	int	exoid			exodus file id
+ *	int	time_step		whole time step number
+ *	int	nodeal_var_index	index of desired nodal variable
+ *       int     start_node		starting location for read
+ *	int	num_nodes		number of nodal points
+ *
+ * exit conditions -
+ *	float*	var_vals		array of nodal variable values
+ *
+ * revision history -
+ *
+ *  $Id: ne_gnnv.c,v 1.16 2008/01/25 15:47:35 gdsjaar Exp $
+ *
+ *****************************************************************************/
 
 #include <exodusII.h> // for ex_get_partial_var, etc
 #include <stdint.h>   // for int64_t

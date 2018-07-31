@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2005 Sandia Corporation. Under the terms of Contract
- * DE-AC04-94AL85000 with Sandia Corporation, the U.S. Government
- * retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -33,26 +33,26 @@
  *
  */
 /*****************************************************************************
-*
-* expev - ex_put_elem_var
-*
-* entry conditions -
-*   input parameters:
-*       int     exoid                   exodus file id
-*       int     time_step               time step number
-*       int     elem_var_index          element variable index
-*       int     elem_blk_id             element block id
-*       int     num_elem_this_blk       number of elements in this block
-*
-* exit conditions -
-*
-*
-* exit conditions -
-*
-* revision history -
-*
-*
-*****************************************************************************/
+ *
+ * expev - ex_put_elem_var
+ *
+ * entry conditions -
+ *   input parameters:
+ *       int     exoid                   exodus file id
+ *       int     time_step               time step number
+ *       int     elem_var_index          element variable index
+ *       int     elem_blk_id             element block id
+ *       int     num_elem_this_blk       number of elements in this block
+ *
+ * exit conditions -
+ *
+ *
+ * exit conditions -
+ *
+ * revision history -
+ *
+ *
+ *****************************************************************************/
 
 #include "exodusII.h" // for ex_put_var, ex_entity_id, etc
 #include <stdint.h>   // for int64_t
@@ -65,8 +65,7 @@ The function ex_put_elem_var() writes the values of a single element
 variable for one element block at one time step. It is recommended,
 but not required, to write the element variable truth table (with
 ex_put_elem_var_tab() before this function is invoked for better
-efficiency. See #Efficiency for a discussion of
-efficiency issues.
+efficiency.
 
 Because element variables are floating point values, the application
 code must declare the array passed to be the appropriate type

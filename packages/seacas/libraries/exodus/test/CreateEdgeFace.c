@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014, Sandia Corporation.
- * Under the terms of Contract DE-AC04-94AL85000 with Sandia Corporation,
- * the U.S. Government retains certain rights in this software.
+ * Copyright (c) 2005-2017 National Technology & Engineering Solutions
+ * of Sandia, LLC (NTESS).  Under the terms of Contract DE-NA0003525 with
+ * NTESS, the U.S. Government retains certain rights in this software.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -15,7 +15,7 @@
  *       disclaimer in the documentation and/or other materials provided
  *       with the distribution.
  *
- *     * Neither the name of Sandia Corporation nor the names of its
+ *     * Neither the name of NTESS nor the names of its
  *       contributors may be used to endorse or promote products derived
  *       from this software without specific prior written permission.
  *
@@ -162,9 +162,11 @@ double vals_fset_var1fs1[2][2] = {{1., 3.}, {9., 27.}};
 int ex_have_arg(int argc, char *argv[], const char *aname)
 {
   int i;
-  for (i = 0; i < argc; ++i)
-    if (!strcmp(argv[i], aname))
+  for (i = 0; i < argc; ++i) {
+    if (!strcmp(argv[i], aname)) {
       return 1;
+    }
+  }
   return 0;
 }
 
@@ -476,6 +478,11 @@ int cCreateEdgeFace(int argc, char *argv[])
   if (concatResult) {
     EXCHECK(ex_put_all_var_param_ext(exoid, &varParams),
             "Unable to write result variable parameter information.\n");
+
+    free(varParams.edge_var_tab);
+    free(varParams.face_var_tab);
+    free(varParams.elem_var_tab);
+    free(varParams.fset_var_tab);
   }
   else {
     EXCHECK(ex_put_variable_param(exoid, EX_GLOBAL, 2),
